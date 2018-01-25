@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/HistogramGrid.h
+
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/main.cpp
+iostream
+-
+HistogramGrid.h
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/HistogramGrid.h
+
