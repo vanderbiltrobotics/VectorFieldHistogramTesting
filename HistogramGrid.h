@@ -5,17 +5,16 @@
 #ifndef VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 #define VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 
+#include <cmath>
 #include "Utils.h"
 
-
+//TODO Implement Assignment operator, copy constructor, and destructors
 class HistogramGrid {
 private:
     int iMax; //Size in the i direction of the histogram grid
     int jMax; //Size in the j direction of the histogram grid
 
-    double nodeWidth; //Width of each of the nodes in meters
-    double nodeLength; //Length of each node in meters
-
+    double nodeSize; //Side dimension of each node. Assumes that each node is square
 
 
     double** histGrid; //Histogram grid object. Stores the certainty values for all nodes in grid
@@ -26,10 +25,9 @@ public:
     //Creates a new histogram grid object with no objects present in the grid
     // int histWidth - Width of the entire histogram in meters
     // int histLength - Length of the entire histogram in meters
-    // int iNum - Number of nodes in the i (width) direction
-    // int jNum - Number of nodes in the j (length) direction
-    HistogramGrid(int histWidth, int histLength, int iNum, int jNum):
-            iMax(iNum>0?(iNum-1):0), jMax(jNum>0?(jNum-1):0), nodeWidth(histWidth/iMax), nodeLength(histLength/jMax)
+    // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
+    HistogramGrid(int histWidth, int histLength, double nodeSideLen):
+            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)), nodeSize(nodeSideLen)
     {
         //Initializing the histGrid and objectGrid
         histGrid = new double*[iMax];
@@ -52,13 +50,17 @@ public:
     discretePoint getDiscretePointFromCont(contPoint pos)
     {
         discretePoint out;
-        out.x = (int)((pos.x)/nodeWidth);
-        out.y = (int)((pos.y)/nodeLength);
+        out.x = (int)((pos.x)/nodeSize);
+        out.y = (int)((pos.y)/nodeSize);
         if(out.x < iMax && out.y < jMax) return out;
         //TODO ERROR HANDLING
         throw;
     }
 
+    //updateCertainty
+    //Updates the certainty value for the node at which the object is located
+    //contPoint - the continuous point at which object is located
+    //certainty - certainty value to set
     void updateCertainty(contPoint pos, double certainty)
     {
         discretePoint objLoc = getDiscretePointFromCont(pos);
@@ -72,7 +74,11 @@ public:
         return histGrid[i][j];
     }
 
-
+    //getDistance
+    //Returns scalar distance between two discretePoints (pos1 & pos2) on the histogram grid
+    double getDistance(discretePoint pos1, discretePoint pos2) {
+        return sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2));
+    }
 };
 
 #endif //VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
