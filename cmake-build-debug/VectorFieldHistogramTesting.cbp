@@ -85,6 +85,9 @@
 		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/HistogramGrid.h">
 			<Option target="VectorFieldHistogramTesting"/>
 		</Unit>
+		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/PolarHistogram.h">
+			<Option target="VectorFieldHistogramTesting"/>
+		</Unit>
 		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/Utils.h">
 			<Option target="VectorFieldHistogramTesting"/>
 		</Unit>

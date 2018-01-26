@@ -76,7 +76,8 @@ public:
 
     //getDistance
     //Returns scalar distance between two discretePoints (pos1 & pos2) on the histogram grid
-    double getDistance(discretePoint pos1, discretePoint pos2) {
+    double getDistance(discretePoint pos1, discretePoint pos2)
+    {
         return sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2));
     }
 };
