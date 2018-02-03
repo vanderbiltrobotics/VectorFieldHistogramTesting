@@ -16,4 +16,11 @@ struct discretePoint {
     int y;
 };
 
+//Region for representing the active region of the histogram grid
+//Stores two points corresponding to two corners of a rectangular region
+struct region {
+    discretePoint min;
+    discretePoint max;
+};
+
 #endif //VECTORFIELDHISTOGRAMTESTING_UTILS_H

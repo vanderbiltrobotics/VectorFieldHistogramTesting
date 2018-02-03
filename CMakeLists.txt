@@ -3,4 +3,4 @@ project(VectorFieldHistogramTesting)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(VectorFieldHistogramTesting main.cpp HistogramGrid.h Utils.h PolarHistogram.h)
+add_executable(VectorFieldHistogramTesting main.cpp HistogramGrid.h Utils.h PolarHistogram.h VFHPather.h)

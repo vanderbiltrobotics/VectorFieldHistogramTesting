@@ -91,6 +91,9 @@
 		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/Utils.h">
 			<Option target="VectorFieldHistogramTesting"/>
 		</Unit>
+		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/VFHPather.h">
+			<Option target="VectorFieldHistogramTesting"/>
+		</Unit>
 		<Unit filename="C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/main.cpp">
 			<Option target="VectorFieldHistogramTesting"/>
 		</Unit>

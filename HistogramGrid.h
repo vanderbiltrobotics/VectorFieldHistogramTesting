@@ -16,9 +16,11 @@ private:
 
     double nodeSize; //Side dimension of each node. Assumes that each node is square
 
-
     double** histGrid; //Histogram grid object. Stores the certainty values for all nodes in grid
     int** objectGrid; //Stores the type of object that exists at each node
+
+    int iSizeActiveRegion; //i-dimension size of the active region measured in number of nodes
+    int jSizeActiveRegion; //j-dimension size of the active region measured in number of nodes
 
 public:
     //HistogramGrid
@@ -27,7 +29,8 @@ public:
     // int histLength - Length of the entire histogram in meters
     // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
     HistogramGrid(int histWidth, int histLength, double nodeSideLen):
-            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)), nodeSize(nodeSideLen)
+            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)), nodeSize(nodeSideLen),
+            iSizeActiveRegion(20), jSizeActiveRegion(20),
     {
         //Initializing the histGrid and objectGrid
         histGrid = new double*[iMax];
@@ -69,9 +72,9 @@ public:
 
     // getProbability
     // Returns the certainty of an object being present at the given node
-    double getCertainty(int i, int j)
+    double getCertainty(discretePoint pos)
     {
-        return histGrid[i][j];
+        return histGrid[pos.x][pos.y];
     }
 
     //getDistance
@@ -80,6 +83,46 @@ public:
     {
         return sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2));
     }
+
+    //getAngle
+    //Returns the angle between the line between pos2 and posRef and the horizontal along positive i direction.
+    double getAngle(discretePoint posRef, discretePoint pos2)
+    {
+        return atan2(pos2.y - posRef.y, pos2.x - posRef.x)*180/M_PI;
+    }
+
+    region getActiveRegion(contPoint robotLoc)
+    {
+        region activeRegion;
+
+        activeRegion.min.x = (robotLoc.x - iSizeActiveRegion/2);
+        if(activeRegion.min.x < 0)
+        {
+            activeRegion.min.x = 0;
+        }
+
+        activeRegion.min.y = (robotLoc.y - jSizeActiveRegion/2);
+        if(activeRegion.min.y < 0)
+        {
+            activeRegion.min.y = 0;
+        }
+
+        activeRegion.max.x = (robotLoc.x + (iSizeActiveRegion - iSizeActiveRegion/2));
+        if(activeRegion.max.x >= iMax)
+        {
+            activeRegion.max.x = iMax;
+        }
+
+        activeRegion.max.x = (robotLoc.x + (jSizeActiveRegion - jSizeActiveRegion/2));
+        if(activeRegion.max.y >= jMax)
+        {
+            activeRegion.max.y = jMax;
+        }
+
+        return activeRegion;
+    }
+
+
 };
 
 #endif //VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H

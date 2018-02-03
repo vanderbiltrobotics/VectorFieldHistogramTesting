@@ -1,5 +1,5 @@
+//PolarHistogram class creates an object to represent the Polar Histogram
 //
-// Created by Swapnil on 1/25/2018.
 //
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_POLARHISTOGRAM_H
@@ -23,21 +23,37 @@ public:
         }
     }
 
+    //getBinFromAngle
+    //Returns the index of the bin based on the angle relative to the absolute coordinate system with which
+    //histogram is represented
     int getBinFromAngle(double angle)
     {
         return (int)(angle/binWidth);
     }
 
+    //getNumBins
+    //Retrieves the number of bins the 360 degrees is discretized into
+    int getNumBins()
+    {
+        return nBins;
+    }
+
+    //getValue
+    //Returns the value of the histogram for the specified bin
     double getValue(int bin)
     {
         return histogram[bin];
     }
 
-    void setValue(double angle, double value)
+    //addValue
+    //Adds the passed value to the current value of the histogram grid
+    void addValue(double angle, double value)
     {
         histogram[getBinFromAngle(angle)] = value;
     }
 
+    //smoothHistogram
+    //Smoothing function that smooths the values of the histogram using a moving average
     void smoothHistogram(int l)
     {
         for(int i = 0; i < nBins; i++)
@@ -49,7 +65,7 @@ public:
                 sum += k*histogram[nBins+(j%nBins)];
             }
             for(int j = i+1, k=l; j <= i+l; j++, k--)
-            {
+            {ff
                 sum += k*histogram[j%nBins];
             }
             histogram[i] = sum/(2*l+1);
@@ -57,6 +73,13 @@ public:
     }
 
 
+    void reset()
+    {
+        for(int i = 0; i < nBins; i++)
+        {
+            histogram[i] = 0;
+        }
+    }
 
 };
 
