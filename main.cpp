@@ -2,20 +2,18 @@
 #include "HistogramGrid.h"
 #include "PolarHistogram.h"
 #include "Utils.h"
+#include "VFHPather.h"
 
 
 int main()
 {
-    PolarHistogram test(10);
-    for(int i = 0; i < 10; i++)
-    {
-        test.setValue(i*36, i*10);
-        std::cout << test.getValue(i) << std::endl;
-    }
-    test.smoothHistogram(1);
-    for(int i = 0; i < 10; i++)
-    {
-        std::cout << test.getValue(i) << std::endl;
-    }
+    VFHPather pather;
+    discretePoint robotLoc;
+    robotLoc.x = 25;
+    robotLoc.y = 25;
+    pather.updateRobotPosition(robotLoc);
+    pather.generateHistogram();
+    pather.printHistogram();
+
 
 }

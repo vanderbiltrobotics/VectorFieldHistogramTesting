@@ -49,7 +49,7 @@ public:
     //Adds the passed value to the current value of the histogram grid
     void addValue(double angle, double value)
     {
-        histogram[getBinFromAngle(angle)] = value;
+        histogram[getBinFromAngle(angle)] += value;
     }
 
     //smoothHistogram
@@ -65,13 +65,20 @@ public:
                 sum += k*histogram[nBins+(j%nBins)];
             }
             for(int j = i+1, k=l; j <= i+l; j++, k--)
-            {ff
+            {
                 sum += k*histogram[j%nBins];
             }
             histogram[i] = sum/(2*l+1);
         }
     }
 
+    void printHistogram()
+    {
+        for(int i = 0; i < nBins; i++)
+        {
+            std::cout << i << " " << histogram[i] << "\n";
+        }
+    }
 
     void reset()
     {

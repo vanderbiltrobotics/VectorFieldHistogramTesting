@@ -18,6 +18,14 @@ cmath
 
 C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/Utils.h
 
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/VFHPather.h
+iostream
+-
+PolarHistogram.h
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/PolarHistogram.h
+HistogramGrid.h
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/HistogramGrid.h
+
 C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/main.cpp
 iostream
 -
@@ -27,4 +35,6 @@ PolarHistogram.h
 C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/PolarHistogram.h
 Utils.h
 C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/Utils.h
+VFHPather.h
+C:/Users/Swapnil/Desktop/Important Things/Robotics/2017-2018 Season/VectorFieldHistogramTesting/VFHPather.h
 

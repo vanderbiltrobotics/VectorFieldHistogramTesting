@@ -5,6 +5,7 @@
 #ifndef VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
 #define VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
 
+#include <iostream>
 #include "PolarHistogram.h"
 #include "HistogramGrid.h"
 
@@ -13,10 +14,10 @@ private:
 
     PolarHistogram hist; //Object used to store the polar histogram
     HistogramGrid grid; //Object used to store the grid/map of obstacles
-    contPoint robotLoc; //Stores the location of the robot
+    discretePoint robotLoc; //Stores the location of the robot
 
-    double a;
-    double b;
+    double a = 50;
+    double b = 100;
     //TODO Store the location fo the robot in the histogram grid rather in the pather
 
 public:
@@ -26,7 +27,7 @@ public:
 
     //TODO: Add ability to dynamically set certainty value
     //Using certainty of 1 for all object currently
-    void updateRobotPosition(contPoint pos)
+    void updateRobotPosition(discretePoint pos)
     {
         robotLoc = pos; //
     }
@@ -37,23 +38,28 @@ public:
     void generateHistogram()
     {
         hist.reset();
-
-        grid.getDiscretePointFromCont(robotLoc);
+        std::cout << "3";
         region activeRegion = grid.getActiveRegion(robotLoc);
-
-        discretePoint discRobotLocation = grid.getDiscretePointFromCont(robotLoc); //Discrete node for robot location
+        std::cout << "4";
         discretePoint curNode; //Node currently being iterated over
+
+        std::cout << "Active Region: " << activeRegion.min.x << " "
+                  << activeRegion.min.y << " " << activeRegion.max.x << " " << activeRegion.max.y << "\n";
+
         for(curNode.x = activeRegion.min.x; curNode.x < activeRegion.max.x; curNode.x++)
         {
             for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
             {
-
-                hist.addValue(grid.getAngle(discRobotLocation, curNode),
-                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, discRobotLocation)));
-
+                hist.addValue(grid.getAngle(robotLoc, curNode),
+                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, robotLoc)));
             }
         }
 
+    }
+
+    void printHistogram()
+    {
+        hist.printHistogram();
     }
 
 };

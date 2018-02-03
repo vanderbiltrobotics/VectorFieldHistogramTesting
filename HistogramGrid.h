@@ -30,7 +30,7 @@ public:
     // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
     HistogramGrid(int histWidth, int histLength, double nodeSideLen):
             iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)), nodeSize(nodeSideLen),
-            iSizeActiveRegion(20), jSizeActiveRegion(20),
+            iSizeActiveRegion(20), jSizeActiveRegion(20)
     {
         //Initializing the histGrid and objectGrid
         histGrid = new double*[iMax];
@@ -45,6 +45,8 @@ public:
                 objectGrid[i][j] = 0;
             }
         }
+        //histGrid[25][20] = 1;
+        histGrid[24][21] = 5;
     }
 
     //getDiscretePointFromCont
@@ -55,9 +57,10 @@ public:
         discretePoint out;
         out.x = (int)((pos.x)/nodeSize);
         out.y = (int)((pos.y)/nodeSize);
-        if(out.x < iMax && out.y < jMax) return out;
+        //if(out.x < iMax && out.y < jMax) return out;
         //TODO ERROR HANDLING
-        throw;
+        //throw;
+        return out;
     }
 
     //updateCertainty
@@ -81,17 +84,19 @@ public:
     //Returns scalar distance between two discretePoints (pos1 & pos2) on the histogram grid
     double getDistance(discretePoint pos1, discretePoint pos2)
     {
-        return sqrt(pow(pos2.x - pos1.x, 2) + pow(pos2.y - pos1.y, 2));
+        return sqrt(pow((double)pos2.x - pos1.x, 2) + pow((double)pos2.y - pos1.y, 2));
     }
 
     //getAngle
     //Returns the angle between the line between pos2 and posRef and the horizontal along positive i direction.
     double getAngle(discretePoint posRef, discretePoint pos2)
     {
-        return atan2(pos2.y - posRef.y, pos2.x - posRef.x)*180/M_PI;
+        double out = atan2((double)pos2.y - posRef.y, (double)pos2.x - posRef.x)*180/M_PI;
+        if(out < 0) out += 360;
+        return out;
     }
 
-    region getActiveRegion(contPoint robotLoc)
+    region getActiveRegion(discretePoint robotLoc)
     {
         region activeRegion;
 
@@ -113,7 +118,7 @@ public:
             activeRegion.max.x = iMax;
         }
 
-        activeRegion.max.x = (robotLoc.x + (jSizeActiveRegion - jSizeActiveRegion/2));
+        activeRegion.max.y = (robotLoc.x + (jSizeActiveRegion - jSizeActiveRegion/2));
         if(activeRegion.max.y >= jMax)
         {
             activeRegion.max.y = jMax;
@@ -121,7 +126,6 @@ public:
 
         return activeRegion;
     }
-
 
 };
 
