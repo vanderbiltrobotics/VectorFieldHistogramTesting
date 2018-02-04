@@ -6,9 +6,10 @@
 #define VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 
 #include <cmath>
+#include <unordered_map>
+
 #include "Utils.h"
 
-//TODO Implement Assignment operator, copy constructor, and destructors
 class HistogramGrid {
 private:
     int iMax; //Size in the i direction of the histogram grid
@@ -29,12 +30,11 @@ public:
     // int histLength - Length of the entire histogram in meters
     // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
     HistogramGrid(int histWidth, int histLength, double nodeSideLen):
-            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)), nodeSize(nodeSideLen),
+            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)),
+            nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
             iSizeActiveRegion(20), jSizeActiveRegion(20)
     {
         //Initializing the histGrid and objectGrid
-        histGrid = new double*[iMax];
-        objectGrid = new int*[iMax];
         for(int i = 0; i < iMax; i++)
         {
             histGrid[i] = new double[jMax];
@@ -45,8 +45,64 @@ public:
                 objectGrid[i][j] = 0;
             }
         }
-        //histGrid[25][20] = 1;
-        histGrid[24][21] = 5;
+    }
+
+    ~HistogramGrid()
+    {
+        for(int i = 0; i < iMax;i++)
+        {
+            delete[] histGrid[i];
+            histGrid[i] = nullptr;
+
+            delete[] objectGrid[i];
+            objectGrid[i] = nullptr;
+        }
+        delete[] histGrid;
+        delete[] objectGrid;
+        histGrid = nullptr;
+        objectGrid = nullptr;
+    }
+
+
+    const HistogramGrid& operator = (const HistogramGrid &rhs)
+    {
+        if(this == &rhs)
+        {
+            return *this;
+        }
+        HistogramGrid tmp(rhs); //make a copy of the right hand side via copy constructor
+
+        //next swap the data between *this and tmp
+        std::swap(iMax, tmp.iMax);
+        std::swap(jMax, tmp.jMax);
+
+        std::swap(nodeSize, tmp.nodeSize);
+
+        std::swap(histGrid, tmp.histGrid);
+        std::swap(objectGrid, tmp.objectGrid);
+
+        std::swap(iSizeActiveRegion, tmp.iSizeActiveRegion);
+        std::swap(jSizeActiveRegion, tmp.jSizeActiveRegion);
+
+        return *this;
+    }
+
+    HistogramGrid(const HistogramGrid &rhs):iMax(rhs.iMax), jMax(rhs.jMax), nodeSize(rhs.nodeSize),
+                                                           histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
+                                                           iSizeActiveRegion(rhs.iSizeActiveRegion),
+                                                           jSizeActiveRegion(rhs.jSizeActiveRegion)
+    {
+        //Initializing the histGrid and objectGrid
+        for(int i = 0; i < iMax; i++)
+        {
+            histGrid[i] = new double[jMax];
+            objectGrid[i] = new int[jMax];
+            for(int j = 0; j < jMax; j++)
+            {
+                histGrid[i][j] = rhs.histGrid[i][j];
+                objectGrid[i][j] = rhs.objectGrid[i][j];
+            }
+        }
     }
 
     //getDiscretePointFromCont
