@@ -23,18 +23,7 @@ private:
     double a = 50; //Constants for the weighting function for histogram generation
     double b = 100;
 
-
-    //TODO Store the location of the robot in the histogram grid rather in the pather
-    discretePoint robotLoc; //Stores the location of the
-    discretePoint target;
-
-    //TODO Improve this data
-    std::vector <valley> valleys;
-
     double valleyThreshold = 5;
-
-
-
 
 public:
     //TODO Provide fields to dynamically set these values
@@ -48,7 +37,7 @@ public:
     //Using certainty of 1 for all object currently
     void updateRobotPosition(discretePoint pos)
     {
-        robotLoc = pos; //
+        grid.setRobotLoc(pos); //
     }
 
 
@@ -58,7 +47,7 @@ public:
     {
         hist.reset();
         std::cout << "3";
-        region activeRegion = grid.getActiveRegion(robotLoc);
+        region activeRegion = grid.getActiveRegion(grid.getRobotLoc());
         std::cout << "4";
         discretePoint curNode; //Node currently being iterated over
 
@@ -69,8 +58,8 @@ public:
         {
             for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
             {
-                hist.addValue(grid.getAngle(robotLoc, curNode),
-                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, robotLoc)));
+                hist.addValue(grid.getAngle(grid.getRobotLoc(), curNode),
+                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, grid.getRobotLoc())));
             }
         }
 
@@ -87,7 +76,7 @@ public:
     double computeTravelDirection()
     {
         //startBin represent bin at which valley finding starts
-        int startBin = 3;//hist.getBinFromAngle(grid.getAngle(robotLoc, target)); //Determine the bin in which the target falls
+        int startBin = 3;//hist.getBinFromAngle(grid.getAngle(grid.getRobotLoc(), target)); //Determine the bin in which the target falls
 
         int negative = 1; //Used to alternate the direction of the array iteration
         int nearIndex; //Index of the edge of valley closest to the target

@@ -23,6 +23,9 @@ private:
     int iSizeActiveRegion; //i-dimension size of the active region measured in number of nodes
     int jSizeActiveRegion; //j-dimension size of the active region measured in number of nodes
 
+    discretePoint robotLoc; //Stores the location of the robot
+    discretePoint target;
+
 public:
     //HistogramGrid
     //Creates a new histogram grid object with no objects present in the grid
@@ -181,6 +184,32 @@ public:
         }
 
         return activeRegion;
+    }
+
+    //getRobotLoc
+    //Returns a discretePoint describing the current position of the robot
+    discretePoint getRobotLoc()
+    {
+        return robotLoc;
+    }
+
+    //getTargetLoc
+    //Returns a discretePoint describing the current position of the target
+    discretePoint getTargetLoc()
+    {
+        return target;
+    }
+
+    //setTargetLoc
+    //Returns a discretePoint describing the current position of the target
+    void setTargetLoc(discretePoint targetLoc)
+    {
+        target = targetLoc;
+    }
+
+    void setRobotLoc(discretePoint robotLocIn)
+    {
+        robotLoc = robotLocIn;
     }
 
 };
