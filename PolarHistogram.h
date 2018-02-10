@@ -23,6 +23,25 @@ public:
         }
     }
 
+    PolarHistogram(bool test): nBins(10), histogram(new double[10])
+    {
+        for(int i = 0; i < 3; i ++)
+        {
+            histogram[i] = 0;
+        }
+
+        histogram[3] = 7;
+        histogram[4] = 7;
+        histogram[5] = 3;
+        histogram[6] = 3;
+        histogram[7] = 10;
+        histogram[8] = 2;
+        histogram[9] = 2;
+
+
+
+    }
+
     //getBinFromAngle
     //Returns the index of the bin based on the angle relative to the absolute coordinate system with which
     //histogram is represented

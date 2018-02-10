@@ -4,6 +4,9 @@
 #include "Utils.h"
 #include "VFHPather.h"
 
+int getIndex(int a, int n) {
+        return ((a % n) + n) % n;
+    }
 
 int main()
 {
@@ -12,8 +15,9 @@ int main()
     robotLoc.x = 25;
     robotLoc.y = 25;
     pather.updateRobotPosition(robotLoc);
-    pather.generateHistogram();
-    pather.printHistogram();
+    //pather.generateHistogram();
+    std:: cout << pather.computeTravelDirection();
+
 
 
 }

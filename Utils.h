@@ -23,4 +23,11 @@ struct region {
     discretePoint max;
 };
 
+struct valley {
+    int lowerBound;
+    int upperBound;
+    bool isWide;
+    
+};
+
 #endif //VECTORFIELDHISTOGRAMTESTING_UTILS_H
