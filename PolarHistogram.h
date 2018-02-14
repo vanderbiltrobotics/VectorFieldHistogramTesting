@@ -23,7 +23,7 @@ public:
         }
     }
 
-    PolarHistogram(bool test): nBins(10), histogram(new double[10])
+    PolarHistogram(bool test): nBins(10), binWidth(36.0), histogram(new double[10])
     {
         for(int i = 0; i < 3; i ++)
         {
@@ -36,7 +36,7 @@ public:
         histogram[6] = 3;
         histogram[7] = 10;
         histogram[8] = 2;
-        histogram[9] = 2;
+        histogram[9] = 3;
 
 
 
@@ -48,6 +48,13 @@ public:
     int getBinFromAngle(double angle)
     {
         return (int)(angle/binWidth);
+    }
+
+    //getAngleFromBin
+    //Returns the angle in the middle of the bin
+    double getAngleFromBin(int bin)
+    {
+        return binWidth/2 + binWidth*bin;
     }
 
     //getNumBins

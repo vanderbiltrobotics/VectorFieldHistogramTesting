@@ -23,7 +23,9 @@ private:
     double a = 50; //Constants for the weighting function for histogram generation
     double b = 100;
 
-    double valleyThreshold = 5;
+    int l = 5; //Smoothing constant for polar histogram
+
+    double valleyThreshold = 15;
 
 public:
     //TODO Provide fields to dynamically set these values
@@ -77,49 +79,78 @@ public:
     //Works by finding the valley whose direction most closely matches the direction of the target
     double computeTravelDirection()
     {
-        generateHistogram(); //Computes the polar histogram
+        //generateHistogram(); //Computes the polar histogram
+        //hist.smoothHistogram(l); //Smoothing histogram
 
         //startBin represent bin at which valley finding starts
-        int startBin = 3;//hist.getBinFromAngle(grid.getAngle(grid.getRobotLoc(), target)); //Determine the bin in which the target falls
+        int startBin = 1;//hist.getBinFromAngle(grid.getAngle(grid.getRobotLoc(), target)); //Determine the bin in which the target falls
 
         int negative = 1; //Used to alternate the direction of the array iteration
-        int nearIndex; //Index of the edge of valley closest to the target
-        int farIndex; //Index of the edge of the valley furthest from target
+        int nearIndex = -1; //Index of the edge of valley closest to the target
+        int farIndex = -1; //Index of the edge of the valley furthest from target
 
-        //Looping over the entire polar histogram
-        for(int count = 1; count <= hist.getNumBins(); count = count + 1)
+        //Determining if the target direction falls within a bin
+        if(hist.getValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
         {
-            int i = getIndex(startBin + negative*count/2, hist.getNumBins());
-            if(hist.getValue(i) < valleyThreshold) //Found valley
+            std::cout << "test 1" << std::endl;
+            //Find upper boundary of valley
+            for(int i = startBin + 1; getIndex(i, hist.getNumBins()) != startBin; i++)
             {
-                if(i == startBin)
+                if(hist.getValue(i) > valleyThreshold)
                 {
-                    //Find upper boundary of valley
-//                    while (count <= hist.getNumBins() && hist.getValue(i) < valleyThreshold)
-//                    {
-//                        i = getIndex(i + 1, hist.getNumBins());
-//                    }
-                    //Find lower boundary of valley
+                    farIndex = i; //Found the further edge of the valley
                     break;
                 }
-                else
+            }
+            //Was not able to find the edge of a valley. Therefore, there are no obstacles.
+            //Robot should travel straight to target.
+            if(farIndex == -1)
+            {
+                return hist.getAngleFromBin(startBin); //TODO return actual angle, not just index
+            }
+
+            //Find lower boundary of valley
+            for(int i = startBin - 1; getIndex(i, hist.getNumBins()) != startBin; i--)
+            {
+
+                if(hist.getValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
+                {
+                    nearIndex = i + 1; //Found the nearer edge of the valley
+                    break;
+                }
+            }
+            std::cout << nearIndex << " " << farIndex << std::endl;
+
+            return getIndex((farIndex+nearIndex)/2, hist.getNumBins());
+
+        }
+        else {
+            //Finding other valleys in histogram
+            //Looping over the entire polar histogram
+            //Count stores the number of bins that have been checked
+            //Loop begins iterating at the startBin, and alternates back and forth to find nearest valley
+            std::cout << "test 2" << std::endl;
+            for (int count = 1; count <= hist.getNumBins(); count = count + 1) {
+                int i = getIndex(startBin + negative * count / 2, hist.getNumBins()); //Index of bin to check next
+                if (hist.getValue(i) < valleyThreshold) //Found valley
                 {
                     nearIndex = i;
                     count++;
                     i = getIndex(i + negative, hist.getNumBins()); //Adds or subtracts index based on direction of array traversal.
-
-                    while (count <= hist.getNumBins() && hist.getValue(i) < valleyThreshold)
-                    {
+                    std::cout << "test 3" << std::endl;
+                    while (count <= hist.getNumBins() && hist.getValue(i) < valleyThreshold) {
                         i = getIndex(i + negative, hist.getNumBins());
                     }
                     farIndex = i;
                     std::cout << nearIndex << " " << farIndex << std::endl;
 
+                    break; //Since loop begins iterating from the target direction, the valley must be the closest valley
                 }
-                break;
+                negative *= -1; //Flipping direction
             }
-            negative *= -1; //Flipping direction
         }
+
+        //Edges of nearest valley are determined, must determine travel direction
         int travelDirectionIndex;
         if(startBin > nearIndex && farIndex > nearIndex)
         {
@@ -133,7 +164,7 @@ public:
         {
             travelDirectionIndex = (nearIndex + farIndex)/2;
         }
-        return travelDirectionIndex;
+        return travelDirectionIndex;//hist.getAngleFromBin(travelDirectionIndex);
     }
 
     void printHistogram()

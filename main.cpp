@@ -15,7 +15,6 @@ int main()
     robotLoc.x = 25;
     robotLoc.y = 25;
     pather.updateRobotPosition(robotLoc);
-    //pather.generateHistogram();
     std:: cout << pather.computeTravelDirection();
 
 
