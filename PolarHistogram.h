@@ -23,7 +23,7 @@ public:
         }
     }
 
-    PolarHistogram(bool test): nBins(10), histogram(new double[10])
+    PolarHistogram(bool test): nBins(10), binWidth(360.0/nBins), histogram(new double[10])
     {
         for(int i = 0; i < 3; i ++)
         {
@@ -37,9 +37,6 @@ public:
         histogram[7] = 10;
         histogram[8] = 2;
         histogram[9] = 2;
-
-
-
     }
 
     //getBinFromAngle
@@ -68,7 +65,10 @@ public:
     //Adds the passed value to the current value of the histogram grid
     void addValue(double angle, double value)
     {
-        histogram[getBinFromAngle(angle)] += value;
+        int bin = getBinFromAngle(angle); // FIXME: Polar: addValue: bin is -2147483648
+        std::cout<<"Polar: addValue: bin is "<<bin<<"\n";
+        histogram[bin] += value;
+        std::cout<<"Polar: addValue: histogram["<<bin<<"] = "<<histogram[bin]<<"\n";
     }
 
     //smoothHistogram

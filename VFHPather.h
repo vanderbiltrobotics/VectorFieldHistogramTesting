@@ -38,6 +38,7 @@ public:
     void updateRobotPosition(discretePoint pos)
     {
         grid.setRobotLoc(pos); //
+        generateHistogram();
     }
 
 
@@ -46,23 +47,41 @@ public:
     void generateHistogram()
     {
         hist.reset();
-        std::cout << "3";
+        // std::cout << "";
         region activeRegion = grid.getActiveRegion(grid.getRobotLoc());
-        std::cout << "4";
-        discretePoint curNode; //Node currently being iterated over
+        // std::cout << "4";
+        // discretePoint curNode; //Node currently being iterated over
 
         std::cout << "Active Region: " << activeRegion.min.x << " "
                   << activeRegion.min.y << " " << activeRegion.max.x << " " << activeRegion.max.y << "\n";
 
-        for(curNode.x = activeRegion.min.x; curNode.x < activeRegion.max.x; curNode.x++)
+        // for(curNode.x = activeRegion.min.x; curNode.x < activeRegion.max.x; curNode.x++)
+        // {
+        //     for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
+        //     {
+        //         hist.addValue(grid.getAngle(grid.getRobotLoc(), curNode),
+        //                 pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, grid.getRobotLoc())));
+        //     }
+        // }
+        for(int x = activeRegion.min.x; x < activeRegion.max.x; ++x)
         {
-            for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
+            for(int y = activeRegion.min.y; y < activeRegion.max.y; ++y)
             {
-                hist.addValue(grid.getAngle(grid.getRobotLoc(), curNode),
-                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, grid.getRobotLoc())));
+                discretePoint curNode;
+                curNode.x = x;
+                curNode.y = y;
+                // std::cout<<"in inner loop: x=" << x << " y=" << y << "\n";
+                discretePoint robotLoc = grid.getRobotLoc();
+                double angle = grid.getAngle(robotLoc, curNode);
+                std::cout<<"angle = "<< angle << "\n";
+                double power = pow(grid.getCertainty(curNode),2);
+                std::cout<<"power = "<< power << "\n";
+                double distance = grid.getDistance(curNode, robotLoc);
+                std::cout<<"distance = "<< distance << "\n";
+                // hist.addValue(grid.getAngle(grid.getRobotLoc(), curNode), pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, grid.getRobotLoc())));
+                hist.addValue(angle, power * (a - b * distance));
             }
         }
-
     }
 
     //getIndex
@@ -86,6 +105,7 @@ public:
         int nearIndex; //Index of the edge of valley closest to the target
         int farIndex; //Index of the edge of the valley furthest from target
 
+        std::cout<<"before the first loop";
         //Looping over the entire polar histogram
         for(int count = 1; count <= hist.getNumBins(); count = count + 1)
         {
