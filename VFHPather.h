@@ -72,9 +72,13 @@ public:
     }
 
     //TODO handle edge cases: There are no obstacles, target direction is in a valley
-    //
+    //computeTravelDirection
+    //Determines the optimal travel direction for the robot based on the generated polar histogram
+    //Works by finding the valley whose direction most closely matches the direction of the target
     double computeTravelDirection()
     {
+        generateHistogram(); //Computes the polar histogram
+
         //startBin represent bin at which valley finding starts
         int startBin = 3;//hist.getBinFromAngle(grid.getAngle(grid.getRobotLoc(), target)); //Determine the bin in which the target falls
 
