@@ -12,6 +12,9 @@ struct contPoint {
 
 //Discrete Point for representing positions discretized into nodes on histogram grid
 struct discretePoint {
+
+    // discretePoint(int x = -99999, int y = -99999) : x{x}, y{y} {} // REVIEW
+
     int x;
     int y;
 };
@@ -27,7 +30,7 @@ struct valley {
     int lowerBound;
     int upperBound;
     bool isWide;
-    
+
 };
 
 #endif //VECTORFIELDHISTOGRAMTESTING_UTILS_H
