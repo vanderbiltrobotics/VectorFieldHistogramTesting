@@ -23,6 +23,8 @@ public:
         }
     }
 
+    //PolarHistogram
+    //Testing constructor with hardcoded values
     PolarHistogram(bool test): nBins(10), binWidth(36.0), histogram(new double[10])
     {
         for(int i = 0; i < 3; i ++)
@@ -37,9 +39,6 @@ public:
         histogram[7] = 10;
         histogram[8] = 2;
         histogram[9] = 3;
-
-
-
     }
 
     //getBinFromAngle

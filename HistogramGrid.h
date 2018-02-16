@@ -6,7 +6,9 @@
 #define VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 
 #include <cmath>
-#include <unordered_map>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #include "Utils.h"
 
@@ -155,7 +157,7 @@ public:
         return out;
     }
 
-    region getActiveRegion(discretePoint robotLoc)
+    region getActiveRegion()
     {
         region activeRegion;
 
