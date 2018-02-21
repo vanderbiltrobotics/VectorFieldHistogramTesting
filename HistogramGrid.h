@@ -39,6 +39,7 @@ public:
             nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
             iSizeActiveRegion(20), jSizeActiveRegion(20)
     {
+        std::cout<<"grid: iMax = "<<iMax<<". jMax = "<<jMax<<"\n";
         //Initializing the histGrid and objectGrid
         for(int i = 0; i < iMax; i++)
         {
@@ -214,6 +215,25 @@ public:
         robotLoc = robotLocIn;
     }
 
+    int** getObjectGrid()
+    {
+        return objectGrid;
+    }
+
+    int getCellValue(int i, int j)
+    {
+        return objectGrid[i][j];
+    }
+
+    int getIMax()
+    {
+      return iMax;
+    }
+
+    int getJMax()
+    {
+      return jMax;
+    }
 };
 
 #endif //VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
