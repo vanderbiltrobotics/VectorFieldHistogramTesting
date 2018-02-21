@@ -20,16 +20,16 @@ private:
     HistogramGrid grid; //Object used to store the grid/map of obstacles
 
 
-    double a = 50; //Constants for the weighting function for histogram generation
-    double b = 100;
+    double a; //Constants for the weighting function for histogram generation
+    double b;
 
-    int l = 5; //Smoothing constant for polar histogram
+    int l; //Smoothing constant for polar histogram
 
-    double valleyThreshold = 15;
+    double valleyThreshold;
 
 public:
     //Default Constructor, implements testing mode of Pather with hard-coded default values
-    VFHPather(): hist(true), grid(10, 10, 0.1)
+    VFHPather(): hist(true), grid(10, 10, 0.1), a(50), b(100), l(5), valleyThreshold(15)
     {}
 
     //Alternate constructor takes all parameters
@@ -43,8 +43,6 @@ public:
     VFHPather(PolarHistogram &histIn, HistogramGrid &gridIn, double aIn, double bIn,
               double lIn, double valleyThresholdIn): hist(histIn), grid(gridIn), a(aIn), b(bIn), l(lIn),
                                                      valleyThreshold(valleyThresholdIn) {}
-
-
     //TODO: Add ability to dynamically set certainty value
     //TODO This function may be deprecated as we restructure the robot code for ROSMOD
     //updateRobotPosition

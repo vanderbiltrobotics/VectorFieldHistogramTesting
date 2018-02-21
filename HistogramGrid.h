@@ -55,8 +55,9 @@ public:
 
     //HistogramGrid
     //Alternate constructor used for ingesting grid from file. Used only for testing
-    HistogramGrid(std::string fName)
+    HistogramGrid(std::string fName, discretePoint robotLocIn)
     {
+        robotLoc = robotLocIn;
         std::string data; //Temporary string to store ingested data
         int histWidth;
         int histLength;
@@ -87,10 +88,17 @@ public:
                 for(int j = 0; j < jMax; j++)
                 {
                     file >> data;
-                    if(data != "0")
+                    if(data == "1")
                     {
                         histGrid[i][j] = 1;
-                        objectGrid[i][j] = std::stoi(data);
+                        objectGrid[i][j] = 1;
+                    }
+                    else if(data == "2")
+                    {
+                        histGrid[i][j] = 0;
+                        objectGrid[i][j] = 0;
+                        target.x = i;
+                        target.y = j;
                     }
                     else
                     {

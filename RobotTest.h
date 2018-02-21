@@ -11,6 +11,8 @@
 
 class RobotTest{
 private:
+    HistogramGrid grid;
+    PolarHistogram hist;
     VFHPather pather; //Object used to store the grid/map of obstacles
     discretePoint currentPosition; //Stores the location of the robot
     double currentSpeed; // linear distance per timestep
@@ -23,22 +25,22 @@ public:
     //Constructor for the RobotTest class
     // init_x: (int)
     // init_y: (int)
-    RobotTest(int init_x, int init_y, double angle_init, double speed_init):
+    RobotTest(discretePoint initPos, double angle_init, double speed_init): grid("../map.txt", initPos), hist(32),
+                                                                            pather(hist, grid, 50, 100, 5, 15),
+                                                                            currentPosition(initPos),
+                                                                            currentSpeed(speed_init),
+                                                                            currentAbsoluteAngle(angle_init)
     // pather(20, 50, 100, 0.1) // iMax = 10, jMax = 10??
-        pather() // iMax = 10, jMax = 10??
+         // iMax = 10, jMax = 10??
     {
-        currentPosition.x = init_x;
-        currentPosition.y = init_y;
-        currentAbsoluteAngle = angle_init;
-        currentSpeed = speed_init;
         pather.updateRobotPosition(currentPosition);
     }
 
-    ~RobotTest()
-    {
-        // delete pather; // FIXME: no delete method in them
-        // delete currentPosition; // FIXME: no delete method in them
-    }
+//    ~RobotTest()
+//    {
+//        // delete pather; // FIXME: no delete method in them
+//        // delete currentPosition; // FIXME: no delete method in them
+//    }
 
     //main function per timestep
     void move()

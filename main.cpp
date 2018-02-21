@@ -11,13 +11,14 @@ int getIndex(int a, int n) {
 
 int main()
 {
-    int x_init = 25;
-    int y_init = 25;
+    discretePoint init;
+    init.x = 25;
+    init.y = 25;
     // double angle_init = 0.78; // pi/4
     double angle_init = 90; // pi/4
     double speed_init = 0.5;
 
-    RobotTest bot(x_init, y_init, angle_init, speed_init);
+    RobotTest bot(init, angle_init, speed_init);
 
     int timestep = 100;
 
@@ -28,12 +29,4 @@ int main()
       // bot.talk();
       bot.draw();
     }
-    // VFHPather pather;
-    // discretePoint robotLoc;
-    // robotLoc.x = 25;
-    // robotLoc.y = 25;
-
-    // pather.updateRobotPosition(robotLoc);
-    //pather.generateHistogram();
-    // std:: cout << pather.computeTravelDirection();
 }
