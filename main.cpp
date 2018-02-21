@@ -10,12 +10,14 @@ int getIndex(int a, int n) {
 
 int main()
 {
-    VFHPather pather;
-    discretePoint robotLoc;
-    robotLoc.x = 25;
-    robotLoc.y = 25;
-    pather.updateRobotPosition(robotLoc);
-    std:: cout << pather.computeTravelDirection();
+    HistogramGrid test("../map.txt");
+    test.printGrid();
+//    VFHPather pather;
+//    discretePoint robotLoc;
+//    robotLoc.x = 25;
+//    robotLoc.y = 25;
+//    pather.updateRobotPosition(robotLoc);
+//    std:: cout << pather.computeTravelDirection();
 
 
 
