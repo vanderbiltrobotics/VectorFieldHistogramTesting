@@ -36,7 +36,4 @@ int main()
     // pather.updateRobotPosition(robotLoc);
     //pather.generateHistogram();
     // std:: cout << pather.computeTravelDirection();
-
-
-
 }
