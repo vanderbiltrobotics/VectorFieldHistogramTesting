@@ -62,8 +62,8 @@ public:
         region activeRegion = grid.getActiveRegion();
         discretePoint curNode; //Node currently being iterated over
 
-        std::cout << "Active Region: " << activeRegion.min.x << " "
-                  << activeRegion.min.y << " " << activeRegion.max.x << " " << activeRegion.max.y << "\n";
+        // std::cout << "Active Region: " << activeRegion.min.x << " "
+                  // << activeRegion.min.y << " " << activeRegion.max.x << " " << activeRegion.max.y << "\n";
 
         for(curNode.x = activeRegion.min.x; curNode.x < activeRegion.max.x; curNode.x++)
         {
@@ -171,6 +171,26 @@ public:
     void printHistogram()
     {
         hist.printHistogram();
+    }
+
+    int** getObjectGrid()
+    {
+      return grid.getObjectGrid();
+    }
+
+    int getCellValue(int i, int j)
+    {
+        return grid.getCellValue(i, j);
+    }
+
+    int getIMax()
+    {
+        return grid.getIMax();
+    }
+
+    int getJMax()
+    {
+        return grid.getJMax();
     }
 };
 #endif //VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
