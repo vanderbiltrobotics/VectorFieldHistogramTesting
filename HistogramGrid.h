@@ -51,6 +51,12 @@ public:
                 objectGrid[i][j] = 0;
             }
         }
+
+        // FIXME: manually add obstacles
+        objectGrid[iMax/2][jMax/2] = 1;
+        objectGrid[iMax/2-1][jMax/2-1] = 1;
+        objectGrid[iMax/2][jMax/2-1] = 1;
+        objectGrid[iMax/2-1][jMax/2] = 1;
     }
 
     ~HistogramGrid()
