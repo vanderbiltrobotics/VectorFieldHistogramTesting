@@ -28,7 +28,7 @@ public:
 
         script.push_back("set xrange [0:500];");
         script.push_back("set yrange [0:500];");
-        script.push_back("plot \"" + fPath +  "\"" + " using 0:0 pt 5 ps 3 ");
+        script.push_back("plot \"" + fPath +  "\"");
 
         plotter.open();
         plotter.execute(script);

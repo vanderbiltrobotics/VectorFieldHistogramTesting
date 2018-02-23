@@ -80,17 +80,13 @@ public:
         std::cout<<"currentPosition is "<<currentPosition.x<<", "<<currentPosition.y<<"\n";
     }
 
-    void draw(GNUPlot plot)
+    void draw()
     // void draw()
     {
         int iMax = pather.getIMax();
         int jMax = pather.getJMax();
-        std::vector<int> x;
-        std::vector<int> y;
+        std::vector<discretePoint> positions;
         // std::iota(std::begin(x), std::end(x), 0); //0 is the starting number
-
-
-
         for(int i = 0; i < iMax; ++i)
         {
             for(int j = 0; j < jMax; ++j)
@@ -99,39 +95,13 @@ public:
                 if(pather.getCellValue(i, j) == 1)
                 {
                     std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
-                    x.push_back(i);
-                    y.push_back(j);
+
                 }
             }
         }
 
-        std::cout << "x.size() = " << x.size();
-        std::cout << "y.size() = " << y.size();
-
-        std::vector<std::vector<int>> v;
-        v.push_back(x);
-        v.push_back(y);
 
 
-
-        // Gnuplot g2;
-
-        std::cout << "window 2: user defined points" << std::endl;
-
-        std::vector<std::string> script;
-        script.push_back("set terminal qt");
-        script.push_back("reset");
-        script.push_back("plot v");
-
-        GNUPlot plotter;
-        plotter.open();
-        plotter.execute(script);
-
-        getchar(); // prevent graph to close
-
-        plotter.write("exit");
-        plotter.flush();
-        plotter.close();
         // try {
         //
         //   // Don't forget to put "\n" at the end of each line!

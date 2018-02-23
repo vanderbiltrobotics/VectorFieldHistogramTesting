@@ -18,14 +18,16 @@ int main()
 {
     Plotter plotter;
     std::vector<std::vector<int>> data(2, std::vector<int>(0, 0));
+    data[0].push_back(0);
+    data[1].push_back(0);
     for(int i = 0; i < 500; i++)
     {
-        data[0].push_back(250);
-        data[1].push_back(250);
+        data[0][0] = i;
+        data[1][0] = i;
 
         std::cout << i << std::endl;
         plotter.plot(data);
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 
 //    int x_init = 25;
