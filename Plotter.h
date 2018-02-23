@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <thread>
 #include "GNUPlot.h"
 
 
@@ -25,10 +26,12 @@ public:
         f.open(fPath);
         f << header << std::endl;
         f.close();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-        script.push_back("set xrange [0:500];");
-        script.push_back("set yrange [0:500];");
-        script.push_back("plot \"" + fPath +  "\"");
+
+        script.push_back("set xrange [0:100];");
+        script.push_back("set yrange [0:100];");
+        script.push_back("plot \"" + fPath +  "\"" + "with points pointsize 7");
 
         plotter.open();
         plotter.execute(script);
@@ -41,16 +44,16 @@ public:
         plotter.close();
     }
 
-    void plot(std::vector<std::vector<int>> dataIn)
+    void plot(std::vector<discretePoint> dataIn)
     {
         std::vector<std::string> script;
         script.push_back("replot");
 
         f.open(fPath);
         f << header << std::endl;
-        for(int j = 0; j < dataIn[0].size(); j++)
+        for(int j = 0; j < dataIn.size(); j++)
         {
-            f << dataIn[0][j] << " " << dataIn[1][j] << std::endl;
+            f << dataIn[0].x << " " << dataIn[1].y << std::endl;
         }
         f.close();
         plotter.execute(script);

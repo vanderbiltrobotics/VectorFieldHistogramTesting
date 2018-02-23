@@ -16,42 +16,41 @@ int getIndex(int a, int n) {
 
 int main()
 {
-    Plotter plotter;
-    std::vector<std::vector<int>> data(2, std::vector<int>(0, 0));
-    data[0].push_back(0);
-    data[1].push_back(0);
-    for(int i = 0; i < 500; i++)
-    {
-        data[0][0] = i;
-        data[1][0] = i;
-
-        std::cout << i << std::endl;
-        plotter.plot(data);
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
-    }
-
-//    int x_init = 25;
-//    int y_init = 25;
-//    // double angle_init = 0.78; // pi/4
-//    double angle_init = 90; // pi/4
-//    double speed_init = 0.5;
-//
-//    RobotTest bot(x_init, y_init, angle_init, speed_init);
-//
-//    int timestep = 100;
-//
-//    GNUPlot gnuplot;
-//
-//    for(int i = 0; i < timestep; ++i)
+//    Plotter plotter;
+//    std::vector<std::vector<int>> data(2, std::vector<int>(0, 0));
+//    data[0].push_back(0);
+//    data[1].push_back(0);
+//    for(int i = 0; i < 500; i++)
 //    {
-//      std::cout<<i<<"th timestep: ";
-//      bot.move();
-//      // bot.talk();
-//      // bot.draw(gnuplot);
-//      bot.draw(gnuplot);
-//      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+//        data[0][0] = i;
+//        data[1][0] = i;
 //
+//        std::cout << i << std::endl;
+//        plotter.plot(data);
 //    }
+
+    int x_init = 25;
+    int y_init = 25;
+    // double angle_init = 0.78; // pi/4
+    double angle_init = 90; // pi/4
+    double speed_init = 0.5;
+
+    RobotTest bot(x_init, y_init, angle_init, speed_init);
+
+    int timestep = 100;
+
+    GNUPlot gnuplot;
+
+    for(int i = 0; i < timestep; ++i)
+    {
+      std::cout<<i<<"th timestep: ";
+      bot.move();
+      // bot.talk();
+      // bot.draw(gnuplot);
+      bot.draw();
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    }
 //    // VFHPather pather;
 //    // discretePoint robotLoc;
 //    // robotLoc.x = 25;

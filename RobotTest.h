@@ -94,14 +94,14 @@ public:
                 // std::cout << pather.getCellValue(i, j) << ' ';
                 if(pather.getCellValue(i, j) == 1)
                 {
+                    positions.push_back({i, j});
                     std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
-
                 }
             }
         }
 
 
-
+        plotter.plot(positions);
         // try {
         //
         //   // Don't forget to put "\n" at the end of each line!
