@@ -5,6 +5,12 @@
 #include "VFHPather.h"
 #include "RobotTest.h"
 
+#include <chrono>
+#include <thread>
+
+// #include "gnuplot-iostream.h"
+#include "GNUPlot.h"
+
 int getIndex(int a, int n) {
     return ((a % n) + n) % n;
 }
@@ -21,12 +27,17 @@ int main()
 
     int timestep = 100;
 
+    GNUPlot gnuplot;
+
     for(int i = 0; i < timestep; ++i)
     {
       std::cout<<i<<"th timestep: ";
       bot.move();
       // bot.talk();
-      bot.draw();
+      // bot.draw(gnuplot);
+      bot.draw(gnuplot);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
     }
     // VFHPather pather;
     // discretePoint robotLoc;

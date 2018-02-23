@@ -8,6 +8,10 @@
 #include <iostream>
 #include "VFHPather.h"
 #include "Utils.h"
+// #include "gnuplot-iostream.h"
+#include "GNUPlot.h"
+
+
 
 class RobotTest{
 private:
@@ -75,24 +79,77 @@ public:
         std::cout<<"currentPosition is "<<currentPosition.x<<", "<<currentPosition.y<<"\n";
     }
 
-    void draw()
+    void draw(GNUPlot plot)
+    // void draw()
     {
         int iMax = pather.getIMax();
         int jMax = pather.getJMax();
+        std::vector<int> x;
+        std::vector<int> y;
+        // std::iota(std::begin(x), std::end(x), 0); //0 is the starting number
+
+
+
         for(int i = 0; i < iMax; ++i)
         {
             for(int j = 0; j < jMax; ++j)
             {
-                if(i == currentPosition.x && j == currentPosition.y)
+                // std::cout << pather.getCellValue(i, j) << ' ';
+                if(pather.getCellValue(i, j) == 1)
                 {
-                    std::cout << "X ";
-                }
-                else
-                {
-                    std::cout << pather.getCellValue(i, j) << ' ';
+                    std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
+                    x.push_back(i);
+                    y.push_back(j);
                 }
             }
         }
+
+        std::cout << "x.size() = " << x.size();
+        std::cout << "y.size() = " << y.size();
+
+        std::vector<std::vector<int>> v;
+        v.push_back(x);
+        v.push_back(y);
+
+
+
+        // Gnuplot g2;
+
+        std::cout << "window 2: user defined points" << std::endl;
+
+        std::vector<std::string> script;
+        script.push_back("set terminal qt");
+        script.push_back("reset");
+        script.push_back("plot v");
+
+        GNUPlot plotter;
+        plotter.open();
+        plotter.execute(script);
+
+        getchar(); // prevent graph to close
+
+        plotter.write("exit");
+        plotter.flush();
+        plotter.close();
+        // try {
+        //
+        //   // Don't forget to put "\n" at the end of each line!
+        // 	// gp << "set xrange [-2:2]\nset yrange [-2:2]\n";
+        // 	// '-' means read from stdin.  The send1d() function sends data to gnuplot's stdin.
+        // 	// gp << "plot '.' with vectors title 'x', '-' with vectors title 'y'\n";
+        //
+        //   // plot.set_style("points").set_xrange(0, iMax).set_yrange(0, jMax).plot_xy(x, y, "points");
+        //
+        //   // plot.reset_plot();
+        // }
+        //
+        // catch (GnuplotException ge)
+        // {
+        //     std::cout << ge.what() << std::endl;
+        // }
+
+
+        // g2.plot_xy();
         // int** objectGrid = pather.getObjectGrid();
         // objectGrid[currentPosition.x][currentPosition.y] = 1;
 
