@@ -9,7 +9,7 @@
 #include "VFHPather.h"
 #include "Utils.h"
 // #include "gnuplot-iostream.h"
-#include "GNUPlot.h"
+#include "Plotter.h"
 
 
 
@@ -20,6 +20,7 @@ private:
     double currentSpeed; // linear distance per timestep
     double maxTurnSpeed; // angle per timestep
     double currentAbsoluteAngle; //absolute
+    Plotter plotter;
     // double[][] world
 
 public:

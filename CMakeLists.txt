@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.9.6)
 # cmake_minimum_required(VERSION <specify CMake version here>)
 project(VectorFieldHistogramTesting)
 
 set(CMAKE_CXX_STANDARD 11)
 
 # add_executable(VectorFieldHistogramTesting main.cpp HistogramGrid.h Utils.h PolarHistogram.h VFHPather.h)
-add_executable(VectorFieldHistogramTesting main.cpp HistogramGrid.h Utils.h PolarHistogram.h VFHPather.h GNUPlot.h GNUPlot.cpp)
+add_executable(VectorFieldHistogramTesting main.cpp HistogramGrid.h Utils.h PolarHistogram.h VFHPather.h GNUPlot.h GNUPlot.cpp Plotter.h)
 
 # set(Boost_USE_STATIC_LIBS OFF)
 # set(Boost_USE_MULTITHREADED ON)
