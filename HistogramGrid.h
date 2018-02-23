@@ -59,6 +59,67 @@ public:
         objectGrid[iMax/2-1][jMax/2] = 1;
     }
 
+    //HistogramGrid
+    //Alternate constructor used for ingesting grid from file. Used only for testing
+    HistogramGrid(std::string fName, discretePoint robotLocIn)
+    {
+        robotLoc = robotLocIn;
+        std::string data; //Temporary string to store ingested data
+        int histWidth;
+        int histLength;
+
+        std::ifstream file(fName);
+        if (file.is_open())
+        {
+            file >> data;
+            histWidth = std::stoi(data);
+
+            file >> data;
+            histLength = std::stoi(data);
+
+            file >> data;
+            nodeSize = std::stod(data);
+
+            iMax = (int)(histWidth/nodeSize);
+            jMax = (int)(histLength/nodeSize);
+            histGrid = new double*[iMax];
+            objectGrid = new int*[jMax];
+            iSizeActiveRegion = 20;
+            jSizeActiveRegion = 20;
+
+            for(int i = 0; i < iMax; i++)
+            {
+                histGrid[i] = new double[jMax];
+                objectGrid[i] = new int[jMax];
+                for(int j = 0; j < jMax; j++)
+                {
+                    file >> data;
+                    if(data == "1")
+                    {
+                        histGrid[i][j] = 1;
+                        objectGrid[i][j] = 1;
+                    }
+                    else if(data == "2")
+                    {
+                        histGrid[i][j] = 0;
+                        objectGrid[i][j] = 0;
+                        target.x = i;
+                        target.y = j;
+                    }
+                    else
+                    {
+                        histGrid[i][j] = 0;
+                        objectGrid[i][j] = 0;
+                    }
+                }
+            }
+
+            file.close();
+        }
+
+        else std::cout << "Unable to open file";
+    }
+
     ~HistogramGrid()
     {
         for(int i = 0; i < iMax;i++)
@@ -76,7 +137,7 @@ public:
     }
 
 
-    const HistogramGrid& operator = (const HistogramGrid &rhs)
+    const HistogramGrid& operator= (const HistogramGrid &rhs)
     {
         if(this == &rhs)
         {
