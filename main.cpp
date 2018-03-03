@@ -31,8 +31,8 @@ int main()
 
 
     discretePoint init;
-    init.x = 25;
-    init.y = 25;
+    init.x = 30;
+    init.y = 30;
 
     // double angle_init = 0.78; // pi/4
     double angle_init = 90; // pi/4
@@ -47,11 +47,12 @@ int main()
     {
       std::cout<<i<<"th timestep: ";
       bot.move();
-      // bot.talk();
+      bot.talk();
       // bot.draw(gnuplot);
       bot.draw();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
+        std::cout << "\n\n\n\n\n\n";
     }
 //    // VFHPather pather;
 //    // discretePoint robotLoc;

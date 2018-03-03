@@ -101,7 +101,7 @@ public:
     {
         for(int i = 0; i < nBins; i++)
         {
-            std::cout << i << " " << histogram[i] << "\n";
+            std::cout << getAngleFromBin(i) << " " << histogram[i] << "\n";
         }
     }
 

@@ -37,7 +37,7 @@ public:
     HistogramGrid(int histWidth, int histLength, double nodeSideLen):
             iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)),
             nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
-            iSizeActiveRegion(20), jSizeActiveRegion(20)
+            iSizeActiveRegion(10), jSizeActiveRegion(10)
     {
         std::cout<<"grid: iMax = "<<iMax<<". jMax = "<<jMax<<"\n";
         //Initializing the histGrid and objectGrid
@@ -63,6 +63,8 @@ public:
     //Alternate constructor used for ingesting grid from file. Used only for testing
     HistogramGrid(std::string fName, discretePoint robotLocIn)
     {
+        //std::cout << "\n\ntesting histogram grid initialization: "<< std::endl;
+
         robotLoc = robotLocIn;
         std::string data; //Temporary string to store ingested data
         int histWidth;
@@ -111,6 +113,7 @@ public:
                         histGrid[i][j] = 0;
                         objectGrid[i][j] = 0;
                     }
+                    //std::cout << i << " " << j << " " << histGrid[i][j] << " " << objectGrid[i][j] << "\n";
                 }
             }
 

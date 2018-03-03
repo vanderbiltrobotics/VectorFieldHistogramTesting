@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
 
 
 #include "PolarHistogram.h"
@@ -17,7 +18,7 @@ class VFHPather{
 private:
 
     PolarHistogram hist; //Object used to store the polar histogram
-    HistogramGrid grid; //Object used to store the grid/map of obstacles
+    HistogramGrid* grid; //Object used to store the grid/map of obstacles
 
 
     double a; //Constants for the weighting function for histogram generation
@@ -25,11 +26,13 @@ private:
 
     int l; //Smoothing constant for polar histogram
 
+    int smax; //Maximum number of nodes that define a wide valley
+
     double valleyThreshold;
 
 public:
     //Default Constructor, implements testing mode of Pather with hard-coded default values
-    VFHPather(): hist(true), grid(10, 10, 0.1), a(50), b(100), l(5), valleyThreshold(15)
+    VFHPather(): hist(true), grid(new HistogramGrid(10, 10, 0.1)), a(50), b(100), l(5), valleyThreshold(15)
     {}
 
     //Alternate constructor takes all parameters
@@ -40,15 +43,15 @@ public:
     //lIn - Smoothing algorithm constant - determines the number of bins included in smoothing
     //valleyThreshold - Threshold for determining whether bin should be included in valley
     //                  If polar object density falls below valley threshold, bin is considered to be part of valley
-    VFHPather(PolarHistogram &histIn, HistogramGrid &gridIn, double aIn, double bIn,
+    VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn, double aIn, double bIn,
               double lIn, double valleyThresholdIn): hist(histIn), grid(gridIn), a(aIn), b(bIn), l(lIn),
-                                                     valleyThreshold(valleyThresholdIn) {}
+                                                     smax(5), valleyThreshold(valleyThresholdIn) {}
     //TODO: Add ability to dynamically set certainty value
     //TODO This function may be deprecated as we restructure the robot code for ROSMOD
     //updateRobotPosition
     void updateRobotPosition(discretePoint pos)
     {
-        grid.setRobotLoc(pos);
+        (*grid).setRobotLoc(pos);
     }
 
 
@@ -56,21 +59,33 @@ public:
     //Builds the vector field histogram based on current position of robot and surrounding obstacles
     void generateHistogram()
     {
+
+
         hist.reset(); //Resetting the histogram
-        region activeRegion = grid.getActiveRegion();
+
+        region activeRegion =  (*grid).getActiveRegion();
+
         discretePoint curNode; //Node currently being iterated over
 
         // std::cout << "Active Region: " << activeRegion.min.x << " "
                   // << activeRegion.min.y << " " << activeRegion.max.x << " " << activeRegion.max.y << "\n";
+        //std::cout << "Histogram generation: \n";
 
         for(curNode.x = activeRegion.min.x; curNode.x < activeRegion.max.x; curNode.x++)
         {
             for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
             {
-                hist.addValue(grid.getAngle(grid.getRobotLoc(), curNode),
-                        pow(grid.getCertainty(curNode),2)*(a-b*grid.getDistance(curNode, grid.getRobotLoc())));
+                double val = pow( (*grid).getCertainty(curNode),2)*(a-b* (*grid).getDistance(curNode,  (*grid).getRobotLoc()));
+                hist.addValue( (*grid).getAngle( (*grid).getRobotLoc(), curNode), val);
+                //std::cout << curNode.x << " " << curNode.y << " " << val << "\n";
+
+                (*grid).getCertainty(curNode);
+                    //std::cout << curNode.x << " " << curNode.y << " " << pow( (*grid).getCertainty(curNode),2)*(a-b* (*grid).getDistance(curNode,  (*grid).getRobotLoc())) << "\n";
             }
         }
+        //std::cout << "End Histogram Generation\n";
+
+        std::cout << "\n";
 
     }
 
@@ -85,45 +100,59 @@ public:
     //Works by finding the valley whose direction most closely matches the direction of the target
     double computeTravelDirection()
     {
+        std::cout << "TEST 0 --------------\n";
+
         generateHistogram(); //Computes the polar histogram
-        hist.smoothHistogram(l); //Smoothing histogram
+        printHistogram();
+        //hist.smoothHistogram(l); //Smoothing histogram
+        std::cout << "TEST 0.5 --------------\n";
+
 
         //startBin represent bin at which valley finding starts
-        int startBin = 1;//hist.getBinFromAngle(grid.getAngle(grid.getRobotLoc(), target)); //Determine the bin in which the target falls
+        int startBin = hist.getBinFromAngle((*grid).getAngle((*grid).getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
 
         int negative = 1; //Used to alternate the direction of the array iteration
         int nearIndex = -1; //Index of the edge of valley closest to the target
         int farIndex = -1; //Index of the edge of the valley furthest from target
-
         //Determining if the target direction falls within a bin
         if(hist.getValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
         {
+            std::cout << "TEST 1 --------------\n";
             //Find upper boundary of valley
             for(int i = startBin + 1; getIndex(i, hist.getNumBins()) != startBin; i++)
             {
-                if(hist.getValue(i) > valleyThreshold)
+                //std::cout << getIndex(i, hist.getNumBins()) << " ";
+                if(hist.getValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
                 {
                     farIndex = i; //Found the further edge of the valley
                     break;
                 }
             }
+            std::cout << "\n";
+            std::cout << "TEST 2 --------------\n";
+
             //Was not able to find the edge of a valley. Therefore, there are no obstacles.
             //Robot should travel straight to target.
             if(farIndex == -1)
             {
                 return hist.getAngleFromBin(startBin);
             }
+            std::cout << "TEST 7 --------------\n";
+
 
             //Find lower boundary of valley
             for(int i = startBin - 1; getIndex(i, hist.getNumBins()) != startBin; i--)
             {
-
+                //std::cout << hist.getValue(hist.getValue(getIndex(i, hist.getNumBins()))) << "\n\n\n";
                 if(hist.getValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
                 {
                     nearIndex = i + 1; //Found the nearer edge of the valley
                     break;
                 }
             }
+            std::cout << "TEST 3 --------------\n";
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
             return hist.getAngleFromBin(getIndex((farIndex+nearIndex)/2, hist.getNumBins()));
         }
         else
@@ -173,22 +202,22 @@ public:
 
     int** getObjectGrid()
     {
-      return grid.getObjectGrid();
+      return (*grid).getObjectGrid();
     }
 
     int getCellValue(int i, int j)
     {
-        return grid.getCellValue(i, j);
+        return (*grid).getCellValue(i, j);
     }
 
     int getIMax()
     {
-        return grid.getIMax();
+        return (*grid).getIMax();
     }
 
     int getJMax()
     {
-        return grid.getJMax();
+        return (*grid).getJMax();
     }
 };
 #endif //VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H

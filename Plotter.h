@@ -29,8 +29,8 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 
-        script.push_back("set xrange [0:100];");
-        script.push_back("set yrange [0:100];");
+        script.push_back("set xrange [0:60];");
+        script.push_back("set yrange [0:60];");
         script.push_back("plot \"" + fPath +  "\"" + "with points pointsize 7");
 
         plotter.open();
@@ -44,7 +44,7 @@ public:
         plotter.close();
     }
 
-    void plot(std::vector<discretePoint> dataIn)
+    void plot(std::vector<discretePoint>& dataIn)
     {
         std::vector<std::string> script;
         script.push_back("replot");
@@ -53,7 +53,7 @@ public:
         f << header << std::endl;
         for(int j = 0; j < dataIn.size(); j++)
         {
-            f << dataIn[0].x << " " << dataIn[1].y << std::endl;
+            f << dataIn[j].x << " " << dataIn[j].y << std::endl;
         }
         f.close();
         plotter.execute(script);

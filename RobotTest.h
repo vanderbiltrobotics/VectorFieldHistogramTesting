@@ -31,7 +31,7 @@ public:
     // init_x: (int)
     // init_y: (int)
     RobotTest(discretePoint initPos, double angle_init, double speed_init): grid("../map.txt", initPos), hist(32),
-                                                                            pather(hist, grid, 50, 100, 5, 15),
+                                                                            pather(hist, &grid, 100, 1, 5, 15),
                                                                             currentPosition(initPos),
                                                                             currentSpeed(speed_init),
                                                                             currentAbsoluteAngle(angle_init)
@@ -39,6 +39,7 @@ public:
          // iMax = 10, jMax = 10??
     {
         pather.updateRobotPosition(currentPosition);
+        grid.setTargetLoc({50,50});
     }
 
 //    ~RobotTest()
@@ -50,15 +51,15 @@ public:
     //main function per timestep
     void move()
     {
-        updateRobotPosition();
         updateRobotAngle();
         updateRobotSpeed();
+        updateRobotPosition();
     }
 
     void updateRobotPosition()
     {
-        currentPosition.x += currentSpeed * cos(currentAbsoluteAngle);
-        currentPosition.y += currentSpeed * sin(currentAbsoluteAngle);
+        currentPosition.x += currentSpeed * cos(currentAbsoluteAngle*M_PI/180);
+        currentPosition.y += currentSpeed * sin(currentAbsoluteAngle*M_PI/180);
         // std::cout<<"trying to update the robot position.\n";
         pather.updateRobotPosition(currentPosition);
         // pather.generateHistogram();
@@ -69,17 +70,20 @@ public:
       // currentAbsoluteAngle = pather.getMinHistAngleBetweenAngles(currentPosition, currentAbsoluteAngle, maxTurnSpeed);
         // std::cout<<"trying to update the robot angle.\n";
         currentAbsoluteAngle = pather.computeTravelDirection();
+        std::cout << "Desired travel angle: " << currentAbsoluteAngle << "\n";
+        //hist.printHistogram();
     }
 
     // TODO: currently speed is always 1 width per timestep
     void updateRobotSpeed()
     {
-        currentSpeed = 1;
+        currentSpeed = 2;
     }
 
     void talk()
     {
-        std::cout<<"currentPosition is "<<currentPosition.x<<", "<<currentPosition.y<<"\n";
+        std::cout<<"currentPosition is "<<currentPosition.x<<", "<<currentPosition.y<<""
+                " Desired Position is " << grid.getTargetLoc().x << ", " << grid.getTargetLoc().y << "\n";
     }
 
     void draw()
@@ -89,20 +93,21 @@ public:
         int jMax = pather.getJMax();
         std::vector<discretePoint> positions;
         // std::iota(std::begin(x), std::end(x), 0); //0 is the starting number
+        positions.push_back(grid.getRobotLoc());
         for(int i = 0; i < iMax; ++i)
         {
             for(int j = 0; j < jMax; ++j)
             {
-                // std::cout << pather.getCellValue(i, j) << ' ';
+                //std::cout << pather.getCellValue(i, j) << ' ';
                 if(pather.getCellValue(i, j) == 1)
                 {
+                    //positions.push_back(grid.getRobotLoc());
                     positions.push_back({i, j});
-                    std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
+                    //std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
                 }
             }
+
         }
-
-
         plotter.plot(positions);
         // try {
         //
