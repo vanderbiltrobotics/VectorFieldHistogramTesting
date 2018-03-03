@@ -31,7 +31,7 @@ public:
     // init_x: (int)
     // init_y: (int)
     RobotTest(discretePoint initPos, double angle_init, double speed_init): grid("../map.txt", initPos), hist(32),
-                                                                            pather(hist, &grid, 100, 1, 5, 15),
+                                                                            pather(hist, &grid, 200, 1, 5, 15),
                                                                             currentPosition(initPos),
                                                                             currentSpeed(speed_init),
                                                                             currentAbsoluteAngle(angle_init)
@@ -94,6 +94,7 @@ public:
         std::vector<discretePoint> positions;
         // std::iota(std::begin(x), std::end(x), 0); //0 is the starting number
         positions.push_back(grid.getRobotLoc());
+        positions.push_back(grid.getTargetLoc());
         for(int i = 0; i < iMax; ++i)
         {
             for(int j = 0; j < jMax; ++j)

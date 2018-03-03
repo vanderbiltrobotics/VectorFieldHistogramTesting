@@ -39,6 +39,8 @@ int main()
     double speed_init = 0.5;
 
     RobotTest bot(init, angle_init, speed_init);
+    getchar();
+
 
     int timestep = 100;
 

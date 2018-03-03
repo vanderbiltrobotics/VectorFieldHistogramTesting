@@ -41,6 +41,12 @@ public:
         histogram[9] = 3;
     }
 
+    //getIndex
+    //Returns index 0 <= i < nBins that corresponds to a. "Wraps" a around histogram.
+    int getIndex(int a) {
+        return ((a % nBins) + nBins) % nBins;
+    }
+
     //getBinFromAngle
     //Returns the index of the bin based on the angle relative to the absolute coordinate system with which
     //histogram is represented
@@ -53,7 +59,7 @@ public:
     //Returns the angle in the middle of the bin
     double getAngleFromBin(int bin)
     {
-        return binWidth/2 + binWidth*bin;
+        return binWidth/2 + binWidth*getIndex(bin);
     }
 
     //getNumBins
@@ -67,7 +73,8 @@ public:
     //Returns the value of the histogram for the specified bin
     double getValue(int bin)
     {
-        return histogram[bin];
+
+        return histogram[getIndex(bin)];
     }
 
     //addValue
@@ -101,7 +108,7 @@ public:
     {
         for(int i = 0; i < nBins; i++)
         {
-            std::cout << getAngleFromBin(i) << " " << histogram[i] << "\n";
+            std::cout << i << " " << getAngleFromBin(i) << " " << histogram[i] << "\n";
         }
     }
 
