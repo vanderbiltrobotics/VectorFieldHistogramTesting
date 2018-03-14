@@ -31,8 +31,8 @@ int main()
 
 
     discretePoint init;
-    init.x = 30;
-    init.y = 30;
+    init.x = 0;
+    init.y = 0;
 
     // double angle_init = 0.78; // pi/4
     double angle_init = 90; // pi/4
@@ -52,7 +52,7 @@ int main()
       bot.talk();
       // bot.draw(gnuplot);
       bot.draw();
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
         std::cout << "\n\n\n\n\n\n";
     }
