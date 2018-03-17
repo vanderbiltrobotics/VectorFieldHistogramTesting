@@ -1,6 +1,7 @@
-//
-// Created by Phil on 2/3/2018.
-//
+// RobotTest.h
+// @author {Zhanwen Chen, Swapnil Pande}
+// @date Feb 3, 2018
+
 #ifndef VECTORFIELDHISTOGRAMTESTING_ROBOTTEST_CPP
 #define VECTORFIELDHISTOGRAMTESTING_ROBOTTEST_CPP
 
@@ -8,144 +9,106 @@
 #include <iostream>
 #include "VFHPather.h"
 #include "Utils.h"
-// #include "gnuplot-iostream.h"
 #include "Plotter.h"
 
+#define NUM_BINS 16
+#define TARGET_X 50
+#define TARGET_Y 50
+// #define MAP_FNAME "../map.txt"
 
+/*
+* NOTE: it is important to distinguish between the same variables at
+* t versus t-1. Instance variables are shared across two timesteps.
+*/
 
 class RobotTest{
 private:
     HistogramGrid grid;
     PolarHistogram hist;
     VFHPather pather; //Object used to store the grid/map of obstacles
-    discretePoint currentPosition; //Stores the location of the robot
-    double currentSpeed; // linear distance per timestep
-    double maxTurnSpeed; // angle per timestep
-    double currentAbsoluteAngle; //absolute
+    discretePoint location; //Stores the location of the robot
+    double speed; // linear distance per timestep
+    // double maxTurnSpeed; // angle per timestep REVIEW: necessary?
+    double angle; // In degrees.
     Plotter plotter;
-    // double[][] world
 
-public:
-    //RobotTest
-    //Constructor for the RobotTest class
-    // init_x: (int)
-    // init_y: (int)
-    RobotTest(discretePoint initPos, double angle_init, double speed_init): grid("../map.txt", initPos), hist(32),
-                                                                            pather(hist, &grid, 200, 1, 5, 15),
-                                                                            currentPosition(initPos),
-                                                                            currentSpeed(speed_init),
-                                                                            currentAbsoluteAngle(angle_init)
-    // pather(20, 50, 100, 0.1) // iMax = 10, jMax = 10??
-         // iMax = 10, jMax = 10??
-    {
-        pather.updateRobotPosition(currentPosition);
-        grid.setTargetLoc({50,50});
-    }
-
-//    ~RobotTest()
-//    {
-//        // delete pather; // FIXME: no delete method in them
-//        // delete currentPosition; // FIXME: no delete method in them
-//    }
-
-    //main function per timestep
-    void move()
-    {
-        updateRobotAngle();
-        updateRobotSpeed();
-        updateRobotPosition();
-    }
-
-    void updateRobotPosition()
-    {
-        currentPosition.x += currentSpeed * cos(currentAbsoluteAngle*M_PI/180);
-        currentPosition.y += currentSpeed * sin(currentAbsoluteAngle*M_PI/180);
-        // std::cout<<"trying to update the robot position.\n";
-        pather.updateRobotPosition(currentPosition);
-        // pather.generateHistogram();
-    }
-
-    void updateRobotAngle()
-    {
-      // currentAbsoluteAngle = pather.getMinHistAngleBetweenAngles(currentPosition, currentAbsoluteAngle, maxTurnSpeed);
-        // std::cout<<"trying to update the robot angle.\n";
-        currentAbsoluteAngle = pather.computeTravelDirection();
-        std::cout << "Desired travel angle: " << currentAbsoluteAngle << "\n";
-        //hist.printHistogram();
-    }
-
-    // TODO: currently speed is always 1 width per timestep
-    void updateRobotSpeed()
-    {
-        currentSpeed = 2;
-    }
-
-    void talk()
-    {
-        std::cout<<"currentPosition is "<<currentPosition.x<<", "<<currentPosition.y<<""
-                " Desired Position is " << grid.getTargetLoc().x << ", " << grid.getTargetLoc().y << "\n";
-    }
-
-    void draw()
-    // void draw()
+    void draw(int currentTimestep, int numTimesteps)
     {
         int iMax = pather.getIMax();
         int jMax = pather.getJMax();
         std::vector<discretePoint> positions;
-        // std::iota(std::begin(x), std::end(x), 0); //0 is the starting number
         positions.push_back(grid.getRobotLoc());
         positions.push_back(grid.getTargetLoc());
         for(int i = 0; i < iMax; ++i)
         {
             for(int j = 0; j < jMax; ++j)
             {
-                //std::cout << pather.getCellValue(i, j) << ' ';
                 if(pather.getCellValue(i, j) == 1)
                 {
-                    //positions.push_back(grid.getRobotLoc());
                     positions.push_back({i, j});
-                    //std::cout << "pushing obstacle at (" << i << ", " << j << ")\n";
                 }
             }
-
         }
-        plotter.plot(positions);
-        // try {
-        //
-        //   // Don't forget to put "\n" at the end of each line!
-        // 	// gp << "set xrange [-2:2]\nset yrange [-2:2]\n";
-        // 	// '-' means read from stdin.  The send1d() function sends data to gnuplot's stdin.
-        // 	// gp << "plot '.' with vectors title 'x', '-' with vectors title 'y'\n";
-        //
-        //   // plot.set_style("points").set_xrange(0, iMax).set_yrange(0, jMax).plot_xy(x, y, "points");
-        //
-        //   // plot.reset_plot();
-        // }
-        //
-        // catch (GnuplotException ge)
-        // {
-        //     std::cout << ge.what() << std::endl;
-        // }
+        plotter.plot(positions, location.x, location.y, angle, currentTimestep, numTimesteps);
+    }
+
+    void getAngle()
+    {
+        angle = pather.computeTravelDirection();
+        std::cout << "Desired travel angle: " << angle << "\n";
+    }
+
+    // TODO: currently speed is always 1 width per timestep
+    void getSpeed()
+    {
+      speed = 2;
+    }
+
+    void updateLocation()
+    {
+        location.x += speed * cos(angle*M_PI/180);
+        location.y += speed * sin(angle*M_PI/180);
+        pather.updateRobotPosition(location);
+    }
 
 
-        // g2.plot_xy();
-        // int** objectGrid = pather.getObjectGrid();
-        // objectGrid[currentPosition.x][currentPosition.y] = 1;
+    void talk()
+    {
+        discretePoint targetLoc = grid.getTargetLoc();
+        std::cout << "location is (" << location.x << ", "
+                  << location.y << "); Desired Position is ("
+                  << targetLoc.x << ", " << targetLoc.y << ")\n";
+    }
 
-        // int nrows = sizeof objectGrid / sizeof objectGrid[0];
+public:
+    //RobotTest
+    //Constructor for the RobotTest class
+    //CHANGED: no need for initAngle or initSpeed: robot should figure out.
+    // RobotTest(discretePoint initPos, double initAngle, double initSpeed):
+    RobotTest(discretePoint initPos):
+        grid("../map.txt", initPos),
+        hist(NUM_BINS),
+        pather(hist, &grid, 200, 1, 5, 15),
+        location(initPos)
+    {
+        pather.updateRobotPosition(location);
+        grid.setTargetLoc({TARGET_X, TARGET_Y});
+    }
 
-        // int ncols = sizeof objectGrid[0] / sizeof(int);
 
-        // std::cout<<"objectGrid: nrows = "<<nrows<<". ncols = "<<nrows;
-        //
-        // for (int i = 0; i < nrows; ++i)
-        // {
-        //     for (int j = 0; j < ncols; ++j)
-        //     {
-        //         std::cout << objectGrid[i][j] << ' ';
-        //     }
-        //     std::cout << std::endl;
-        // }
+    //main function per timestep
+    // 1. Get angle from nothing at t=0, then
+    // 2. get speed from nothing at t=0.
+    // 3. Given position at 0, draw simulation at t=0,
+    // 4. Now move from t=0 to t=1 by only updating the robot's position.
+    void move(int currentTimestep, int numTimesteps)
+    {
+        getAngle(); // angle: Null (or optionally, t-1) => t
+        getSpeed(); // speed: Null (or optionally, t-1) => t
+
+        draw(currentTimestep, numTimesteps); // at t=0, angle: t=0, speed, position: t
+
+        updateLocation(); // position: t => t+1
     }
   };
 #endif //VECTORFIELDHISTOGRAMTESTING_ROBOTTEST_CPP

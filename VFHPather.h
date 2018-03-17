@@ -149,7 +149,7 @@ public:
                     else leftIndex = i;
                 }
             }
-            std::cout << leftIndex << " " << rightIndex << "\n";
+            // std::cout << leftIndex << " " << rightIndex << "\n";
             //Returns the average value of the bins
             return hist.getAngleFromBin((rightIndex+leftIndex)/2);
         }
@@ -161,7 +161,7 @@ public:
             //Stores the suggested travel direction for each of side of the histogram and selects direction closest to target
             int i;
             //Checking left side
-            std::cout << "\n Left Side parameters: \n";
+            // std::cout << "\n Left Side parameters: \n";
             for (i = startBin + 1; i <= hist.getNumBins()/2; i++) {
                 if (hist.getValue(i) < valleyThreshold) //Found valley
                 {
@@ -170,19 +170,19 @@ public:
                     while(hist.getValue(i) < valleyThreshold && abs(i - rightIndex) < smax) i++;
                     int leftIndex = i;
                     leftTravelDir = (rightIndex + leftIndex)/2;
-                    std::cout << hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(leftTravelDir) << "\n";
+                    // std::cout <<"lol"<< hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(leftTravelDir) << "\n";
                     break; //Since loop begins iterating from the target direction, the valley must be the closest valley
                 }
             }
 
             if(i < hist.getNumBins()/2) i = hist.getNumBins() - hist.getNumBins()/2; //setting max iteration for left side
             i -= hist.getNumBins();
-            std::cout << "\ni: " <<  i << " " << hist.getIndex(i) << std::endl;
+            // std::cout << "\ni: " <<  i << " " << hist.getIndex(i) << std::endl;
             int j;
             //Checking right side
-            std::cout << "\n Right Side parameters: \n";
+            // std::cout << "\n Right Side parameters: \n";
             for (j = startBin - 1; j > i; j--) {
-                std::cout << "\nj: " << j << " " << i << " " << hist.getValue(j) << "\n";
+                // std::cout << "\nj: " << j << " " << i << " " << hist.getValue(j) << "\n";
                 if (hist.getValue(j) < valleyThreshold) //Found valley
                 {
                     int rightIndex = j+1;
@@ -193,17 +193,17 @@ public:
                     }
                     int leftIndex = j+1;
                     leftTravelDir = (rightIndex + leftIndex)/2;
-                    std::cout << hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(rightTravelDir) << "\n";
+                    // std::cout << "lol"<<hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(rightTravelDir) << "\n";
                     break; //Since loop begins iterating from the target direction, the valley must be the closest valley
                 }
             }
-            std::cout << "\nTarget Direction: " << startBin << "\n";
+            // std::cout << "\nTarget Direction: " << startBin << "\n";
             if(abs(rightTravelDir-startBin) < abs(leftTravelDir-startBin)) {
-                std::cout << "\nSelected Direction: " << hist.getIndex(rightTravelDir) << "\n";
+                // std::cout << "\nSelected Direction: " << hist.getIndex(rightTravelDir) << "\n";
                 return hist.getAngleFromBin(rightTravelDir);
             }
             else {
-                std::cout << "\nSelected Direction: " << hist.getIndex(leftTravelDir) << "\n";
+                // std::cout << "\nSelected Direction: " << hist.getIndex(leftTravelDir) << "\n";
                 return hist.getAngleFromBin(leftTravelDir);
             }
         }

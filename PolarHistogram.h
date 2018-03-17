@@ -108,7 +108,7 @@ public:
     {
         for(int i = 0; i < nBins; i++)
         {
-            std::cout << i << " " << getAngleFromBin(i) << " " << histogram[i] << "\n";
+            std::cout << i <<"th bin: angle = " << getAngleFromBin(i) << " , certainty = " << histogram[i] << "\n";
         }
     }
 
