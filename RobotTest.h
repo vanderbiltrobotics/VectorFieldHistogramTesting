@@ -11,11 +11,6 @@
 #include "Utils.h"
 #include "Plotter.h"
 
-#define NUM_BINS 16
-#define TARGET_X 50
-#define TARGET_Y 50
-// #define MAP_FNAME "../map.txt"
-
 /*
 * NOTE: it is important to distinguish between the same variables at
 * t versus t-1. Instance variables are shared across two timesteps.
@@ -24,11 +19,10 @@
 class RobotTest{
 private:
     HistogramGrid grid;
-    PolarHistogram hist;
+    PolarHistogram polarHist;
     VFHPather pather; //Object used to store the grid/map of obstacles
     discretePoint location; //Stores the location of the robot
     double speed; // linear distance per timestep
-    // double maxTurnSpeed; // angle per timestep REVIEW: necessary?
     double angle; // In degrees.
     Plotter plotter;
 
@@ -85,14 +79,19 @@ public:
     //Constructor for the RobotTest class
     //CHANGED: no need for initAngle or initSpeed: robot should figure out.
     // RobotTest(discretePoint initPos, double initAngle, double initSpeed):
-    RobotTest(discretePoint initPos):
-        grid("../map.txt", initPos),
-        hist(NUM_BINS),
-        pather(hist, &grid, 200, 1, 5, 15),
+    RobotTest(discretePoint initPos, discretePoint targetPos, int numBins,
+              int iSizeActiveRegion, int jSizeActiveRegion, int histWidth,
+              int histLength, int nodeSize, int maxNumNodesForValley,
+              double a, double b, int l, double valleyThreshold):
+        grid("../map.txt", initPos, iSizeActiveRegion, jSizeActiveRegion, histWidth,
+            histLength, nodeSize),
+        polarHist(numBins),
+        pather(polarHist, &grid, iSizeActiveRegion, jSizeActiveRegion, histWidth,
+        histLength, nodeSize, maxNumNodesForValley, a, b, l, valleyThreshold),
         location(initPos)
     {
         pather.updateRobotPosition(location);
-        grid.setTargetLoc({TARGET_X, TARGET_Y});
+        grid.setTargetLoc({targetPos.x, targetPos.y});
     }
 
 
