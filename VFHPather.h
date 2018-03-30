@@ -1,7 +1,6 @@
 //
 // Created by Swapnil on 2/3/2018.
-// REVIEW: bug source:  if multiple valid directions, which one to choose?
-// REVIEW: Not considering far enough obstacles (activeRegion)?
+//
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
 #define VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
@@ -17,11 +16,11 @@
 
 class VFHPather{
 private:
+
     PolarHistogram polarHist; //Object used to store the polar histogram
     HistogramGrid* grid; //Object used to store the grid/map of obstacles
 
-    //Constants for the weighting function for histogram generation
-    double a;
+    double a; //Constants for the weighting function for histogram generation
     double b;
 
     int l; //Smoothing constant for polar histogram
@@ -30,20 +29,25 @@ private:
 
     double valleyThreshold;
 
-    double getRobotToTargetAngle()
-    {
-        //startBin represent bin at which valley finding starts
-        discretePoint robotLocation = (*grid).getRobotLoc();
-        discretePoint targetLocation = grid->getTargetLoc();
-
-        // REVIEW: is the angle relative or absolute?
-        double robotToTargetAngle = (*grid).getAngle(robotLocation, targetLocation);
-        return robotToTargetAngle;
-    }
-
 public:
+      // Preferred constructor
+    // VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn,
+    //           int iSizeActiveRegion, int jSizeActiveRegion, int histWidth,
+    //           int histLength, double nodeSize,
+    //           int maxNumNodesForValley, double aIn, double bIn,
+    //           double lIn, double valleyThresholdIn):
+    //     polarHist(histIn),
+    //     grid(gridIn),
+    //     a(aIn),
+    //     b(bIn),
+    //     l(lIn),
+    //     maxNumNodesForValley(maxNumNodesForValley),
+    //     valleyThreshold(valleyThresholdIn)
+    // {
+    //     std::cout<<"VFHPather: Using preferred constructor.";
+    // }
     //Default Constructor, implements testing mode of Pather with hard-coded default values
-    // VFHPather(): hist(true), grid(new HistogramGrid(10, 10, 0.1)), a(50), b(100), l(5), valleyThreshold(15)
+    // VFHPather(): polarHist(true), grid(new HistogramGrid(10, 10, 0.1)), a(50), b(100), l(5), valleyThreshold(15)
     // {}
 
     //Alternate constructor takes all parameters
@@ -54,20 +58,17 @@ public:
     //lIn - Smoothing algorithm constant - determines the number of bins included in smoothing
     //valleyThreshold - Threshold for determining whether bin should be included in valley
     //                  If polar object density falls below valley threshold, bin is considered to be part of valley
-    VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn,
-              int iSizeActiveRegion, int jSizeActiveRegion, int histWidth,
-              int histLength, double nodeSize,
-              int maxNumNodesForValley, double aIn, double bIn,
-              double lIn, double valleyThresholdIn):
+    VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn, double aIn, double bIn,
+              double lIn, double valleyThresholdIn, int maxNumNodesForValleyIn):
         polarHist(histIn),
         grid(gridIn),
         a(aIn),
         b(bIn),
         l(lIn),
-        maxNumNodesForValley(maxNumNodesForValley),
+        maxNumNodesForValley(maxNumNodesForValleyIn),
         valleyThreshold(valleyThresholdIn)
     {
-
+      std::cout<<"VFHPather: Using secondary constructor.\n";
     }
     //TODO: Add ability to dynamically set certainty value
     //TODO This function may be deprecated as we restructure the robot code for ROSMOD
@@ -77,13 +78,14 @@ public:
         (*grid).setRobotLoc(pos);
     }
 
+
     //generateHistogram
     //Builds the vector field histogram based on current position of robot and surrounding obstacles
     void generateHistogram()
     {
         polarHist.reset(); //Resetting the histogram
 
-        region activeRegion = (*grid).getActiveRegion();
+        region activeRegion =  (*grid).getActiveRegion();
 
         discretePoint curNode; //Node currently being iterated over
 
@@ -116,10 +118,10 @@ public:
         generateHistogram(); //Computes the polar histogram
         printHistogram();
 
-        //hist.smoothHistogram(l); //Smoothing histogram REVIEW: should uncomment this?
-        double robotToTargetAngle = getRobotToTargetAngle();
+        //polarHist.smoothHistogram(l); //Smoothing histogram
 
-        int startBin = polarHist.getBinFromAngle(robotToTargetAngle); //Determine the bin in which the target falls
+        //startBin represent bin at which valley finding starts
+        int startBin = polarHist.getBinFromAngle((*grid).getAngle((*grid).getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
 
         //EDGE CASE: Determining if the target direction falls within a bin
         //This handled by finding the edges of the valleys
@@ -137,6 +139,7 @@ public:
             //Iteration occurs alternating in left & right direction of target
             while(count <= polarHist.getNumBins() && count <= maxNumNodesForValley)
             {
+
                 i = startBin + negative * count / divide; //Index of bin to check next
 
                 if(polarHist.getValue(i) > valleyThreshold)
@@ -186,52 +189,43 @@ public:
                 {
                     int rightIndex = i;
                     //Iterating over valley to find other edge of the valley.
-                    while(polarHist.getValue(i) < valleyThreshold && abs(i - rightIndex) < maxNumNodesForValley) i++; // REVIEW
+                    while(polarHist.getValue(i) < valleyThreshold && abs(i - rightIndex) < maxNumNodesForValley) i++;
                     int leftIndex = i;
                     leftTravelDir = (rightIndex + leftIndex)/2;
-                    // std::cout <<"lol"<< hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(leftTravelDir) << "\n";
+                    // std::cout <<"lol"<< polarHist.getIndex(leftIndex) << " " << polarHist.getIndex(rightIndex) << " " << polarHist.getIndex(leftTravelDir) << "\n";
                     break; //Since loop begins iterating from the target direction, the valley must be the closest valley
                 }
             }
 
-            // if(i < hist.getNumBins()/2) i = hist.getNumBins() - hist.getNumBins()/2; //setting max iteration for left side
-
-            //setting max iteration for left side
-            int numBins = polarHist.getNumBins();
-            if(i < numBins/2)
-            {
-              i = numBins/2;
-            }
-
-            // i -= hist.getNumBins();
-            i -= numBins;
-            // std::cout << "\ni: " <<  i << " " << hist.getIndex(i) << std::endl;
+            if(i < polarHist.getNumBins()/2) i = polarHist.getNumBins() - polarHist.getNumBins()/2; //setting max iteration for left side
+            i -= polarHist.getNumBins();
+            // std::cout << "\ni: " <<  i << " " << polarHist.getIndex(i) << std::endl;
             int j;
             //Checking right side
             // std::cout << "\n Right Side parameters: \n";
             for (j = startBin - 1; j > i; j--) {
-                // std::cout << "\nj: " << j << " " << i << " " << hist.getValue(j) << "\n";
+                // std::cout << "\nj: " << j << " " << i << " " << polarHist.getValue(j) << "\n";
                 if (polarHist.getValue(j) < valleyThreshold) //Found valley
                 {
                     int rightIndex = j+1;
                     //Iterating over valley to find other edge of the valley.
-                    while(polarHist.getValue(j) < valleyThreshold && abs(j-rightIndex) < maxNumNodesForValley)
+                    while(polarHist.getValue(j) < valleyThreshold && abs(j-rightIndex)  < maxNumNodesForValley)
                     {
                         j--;
                     }
                     int leftIndex = j+1;
                     leftTravelDir = (rightIndex + leftIndex)/2;
-                    // std::cout << "lol"<<hist.getIndex(leftIndex) << " " << hist.getIndex(rightIndex) << " " << hist.getIndex(rightTravelDir) << "\n";
+                    // std::cout << "lol"<<polarHist.getIndex(leftIndex) << " " << polarHist.getIndex(rightIndex) << " " << polarHist.getIndex(rightTravelDir) << "\n";
                     break; //Since loop begins iterating from the target direction, the valley must be the closest valley
                 }
             }
             // std::cout << "\nTarget Direction: " << startBin << "\n";
             if(abs(rightTravelDir-startBin) < abs(leftTravelDir-startBin)) {
-                // std::cout << "\nSelected Direction: " << hist.getIndex(rightTravelDir) << "\n";
+                // std::cout << "\nSelected Direction: " << polarHist.getIndex(rightTravelDir) << "\n";
                 return polarHist.getAngleFromBin(rightTravelDir);
             }
             else {
-                // std::cout << "\nSelected Direction: " << hist.getIndex(leftTravelDir) << "\n";
+                // std::cout << "\nSelected Direction: " << polarHist.getIndex(leftTravelDir) << "\n";
                 return polarHist.getAngleFromBin(leftTravelDir);
             }
         }

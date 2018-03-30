@@ -11,6 +11,24 @@
 #include "Utils.h"
 #include "Plotter.h"
 
+#define HIST_WIDTH 50 // originally 50
+#define HIST_LENGTH 50 // originally 50
+#define NODE_SIZE_IN 1
+#define NUM_BINS 32 // 32 originally. 25 gets around to the target
+#define ACTIVE_REGION_SIZE_I 30 // Originally 20. 30 gets stuck early on. 10 Goes through all obstacles.
+#define ACTIVE_REGION_SIZE_J 30
+
+// Less useful params
+#define TARGET_X 50
+#define TARGET_Y 50
+#define A_IN 200
+#define B_IN 1
+#define L_IN 5
+#define MAX_NUM_NODES_FOR_VALLEY_IN 15
+#define VALLEY_THRESHOLD_IN 10
+
+// #define MAP_FNAME "../map.txt"
+
 /*
 * NOTE: it is important to distinguish between the same variables at
 * t versus t-1. Instance variables are shared across two timesteps.
@@ -19,10 +37,11 @@
 class RobotTest{
 private:
     HistogramGrid grid;
-    PolarHistogram polarHist;
+    PolarHistogram hist;
     VFHPather pather; //Object used to store the grid/map of obstacles
     discretePoint location; //Stores the location of the robot
     double speed; // linear distance per timestep
+    // double maxTurnSpeed; // angle per timestep REVIEW: necessary?
     double angle; // In degrees.
     Plotter plotter;
 
@@ -79,19 +98,14 @@ public:
     //Constructor for the RobotTest class
     //CHANGED: no need for initAngle or initSpeed: robot should figure out.
     // RobotTest(discretePoint initPos, double initAngle, double initSpeed):
-    RobotTest(discretePoint initPos, discretePoint targetPos, int numBins,
-              int iSizeActiveRegion, int jSizeActiveRegion, int histWidth,
-              int histLength, int nodeSize, int maxNumNodesForValley,
-              double a, double b, int l, double valleyThreshold):
-        grid("../map.txt", initPos, iSizeActiveRegion, jSizeActiveRegion, histWidth,
-            histLength, nodeSize),
-        polarHist(numBins),
-        pather(polarHist, &grid, iSizeActiveRegion, jSizeActiveRegion, histWidth,
-        histLength, nodeSize, maxNumNodesForValley, a, b, l, valleyThreshold),
+    RobotTest(discretePoint initPos):
+        grid("../map.txt", initPos, ACTIVE_REGION_SIZE_I, ACTIVE_REGION_SIZE_J, HIST_WIDTH, HIST_LENGTH, NODE_SIZE_IN),
+        hist(NUM_BINS),
+        pather(hist, &grid, A_IN, B_IN, L_IN, MAX_NUM_NODES_FOR_VALLEY_IN, VALLEY_THRESHOLD_IN),
         location(initPos)
     {
         pather.updateRobotPosition(location);
-        grid.setTargetLoc({targetPos.x, targetPos.y});
+        grid.setTargetLoc({TARGET_X, TARGET_Y});
     }
 
 

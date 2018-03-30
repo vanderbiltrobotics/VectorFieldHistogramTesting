@@ -1,6 +1,7 @@
 //
 // Created by Swapnil on 1/25/2018.
 //
+
 #ifndef VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 #define VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 
@@ -10,7 +11,6 @@
 #include <string>
 
 #include "Utils.h"
-
 
 class HistogramGrid {
 private:
@@ -33,9 +33,7 @@ public:
     //Creates a new histogram grid object with no objects present in the grid
     // int histWidth - Width of the entire histogram in meters
     // int histLength - Length of the entire histogram in meters
-    // double nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
-    // int activeRegionSize_i
-    // int activeRegionSize_j
+    // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
     HistogramGrid(int histWidth, int histLength, double nodeSideLen,
                   int activeRegionSize_i, int activeRegionSize_j):
             iMax((int)(histWidth/nodeSideLen)),
@@ -67,19 +65,30 @@ public:
     }
 
     //HistogramGrid
-    // BUG: activeRegionSize_i, activeRegionSize_i are not used here
     //Alternate constructor used for ingesting grid from file. Used only for testing
-    HistogramGrid(std::string fName, discretePoint robotLocIn, int iSizeActiveRegion, int jSizeActiveRegion, int histWidth, int histLength, double nodeSize)
+    // HistogramGrid(std::string fName, discretePoint robotLocIn,
+    //               int activeRegionSize_i, int activeRegionSize_j):
+    //     iSizeActiveRegion(activeRegionSize_i),
+    //     jSizeActiveRegion(activeRegionSize_j)
+    HistogramGrid(std::string fName, discretePoint robotLocIn,
+                  int activeRegionSize_i, int activeRegionSize_j,
+                  int histWidth, int histLength, double nodeSizeIn):
+        iSizeActiveRegion(activeRegionSize_i),
+        jSizeActiveRegion(activeRegionSize_j),
+        nodeSize(nodeSizeIn)
     {
         //std::cout << "\n\ntesting histogram grid initialization: "<< std::endl;
+
         robotLoc = robotLocIn;
         std::string data; //Temporary string to store ingested data
+        // int histWidth;
+        // int histLength;
 
         std::ifstream file(fName);
         if (file.is_open())
         {
             // file >> data;
-            // histWidth = std::stoi(data); // 50
+            // histWidth = std::stoi(data);
             //
             // file >> data;
             // histLength = std::stoi(data);

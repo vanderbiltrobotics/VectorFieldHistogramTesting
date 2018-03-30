@@ -15,10 +15,7 @@ private:
 
 public:
     //Creates a Polar Histogram object with the number of bins passed
-    PolarHistogram(int numBins):
-        nBins(numBins),
-        binWidth(360.0/numBins),
-        histogram(new double[nBins])
+    PolarHistogram(int numBins): nBins(numBins), binWidth(360.0/numBins), histogram(new double[nBins])
     {
         for(int i = 0; i < nBins; i++)
         {
@@ -26,15 +23,22 @@ public:
         }
     }
 
-    void setPolarHistogramValue(int bin, double newValue)
+    //PolarHistogram
+    //Testing constructor with hardcoded values
+    PolarHistogram(bool test): nBins(10), binWidth(36.0), histogram(new double[10])
     {
-        if (bin < nBins)
+        for(int i = 0; i < 3; i ++)
         {
-            histogram[bin] = newValue;
-        } else
-        {
-            throw "PolarHistogram.setPolarHistogramValue: given bin out of range";
+            histogram[i] = 0;
         }
+
+        histogram[3] = 7;
+        histogram[4] = 7;
+        histogram[5] = 3;
+        histogram[6] = 3;
+        histogram[7] = 10;
+        histogram[8] = 2;
+        histogram[9] = 3;
     }
 
     //getIndex
@@ -69,6 +73,7 @@ public:
     //Returns the value of the histogram for the specified bin
     double getValue(int bin)
     {
+
         return histogram[getIndex(bin)];
     }
 
