@@ -34,10 +34,15 @@ public:
     // int histWidth - Width of the entire histogram in meters
     // int histLength - Length of the entire histogram in meters
     // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
-    HistogramGrid(int histWidth, int histLength, double nodeSideLen):
-            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)),
-            nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
-            iSizeActiveRegion(10), jSizeActiveRegion(10)
+    HistogramGrid(int histWidth, int histLength, double nodeSideLen,
+                  int activeRegionSize_i, int activeRegionSize_j):
+            iMax((int)(histWidth/nodeSideLen)),
+            jMax((int)(histLength/nodeSideLen)),
+            nodeSize(nodeSideLen),
+            histGrid(new double*[iMax]),
+            objectGrid(new int*[jMax]),
+            iSizeActiveRegion(activeRegionSize_i),
+            jSizeActiveRegion(activeRegionSize_j)
     {
         std::cout<<"grid: iMax = "<<iMax<<". jMax = "<<jMax<<"\n";
         //Initializing the histGrid and objectGrid
@@ -61,33 +66,40 @@ public:
 
     //HistogramGrid
     //Alternate constructor used for ingesting grid from file. Used only for testing
-    HistogramGrid(std::string fName, discretePoint robotLocIn)
+    // HistogramGrid(std::string fName, discretePoint robotLocIn,
+    //               int activeRegionSize_i, int activeRegionSize_j):
+    //     iSizeActiveRegion(activeRegionSize_i),
+    //     jSizeActiveRegion(activeRegionSize_j)
+    HistogramGrid(std::string fName, discretePoint robotLocIn,
+                  int activeRegionSize_i, int activeRegionSize_j,
+                  int histWidth, int histLength, double nodeSizeIn):
+        iSizeActiveRegion(activeRegionSize_i),
+        jSizeActiveRegion(activeRegionSize_j),
+        nodeSize(nodeSizeIn)
     {
         //std::cout << "\n\ntesting histogram grid initialization: "<< std::endl;
 
         robotLoc = robotLocIn;
         std::string data; //Temporary string to store ingested data
-        int histWidth;
-        int histLength;
+        // int histWidth;
+        // int histLength;
 
         std::ifstream file(fName);
         if (file.is_open())
         {
-            file >> data;
-            histWidth = std::stoi(data);
-
-            file >> data;
-            histLength = std::stoi(data);
-
-            file >> data;
-            nodeSize = std::stod(data);
+            // file >> data;
+            // histWidth = std::stoi(data);
+            //
+            // file >> data;
+            // histLength = std::stoi(data);
+            //
+            // file >> data;
+            // nodeSize = std::stod(data);
 
             iMax = (int)(histWidth/nodeSize);
             jMax = (int)(histLength/nodeSize);
             histGrid = new double*[iMax];
             objectGrid = new int*[jMax];
-            iSizeActiveRegion = 20;
-            jSizeActiveRegion = 20;
 
             for(int i = 0; i < iMax; i++)
             {
