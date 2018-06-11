@@ -23,7 +23,7 @@ private:
     int** objectGrid; //Stores the type of object that exists at each node
 
     int iSizeActiveRegion; //i-dimension size of the active region measured in number of nodes
-    int jSizeActiveRegion; //j-dimension size of the active region measured in number of nodes
+    int jSizeActiveRegion; //j-dimension size of the active region
 
     discretePoint robotLoc; //Stores the location of the robot
     discretePoint target;
@@ -33,13 +33,14 @@ public:
     //Creates a new histogram grid object with no objects present in the grid
     // int histWidth - Width of the entire histogram in meters
     // int histLength - Length of the entire histogram in meters
-    // int nodeSideLen - Side dimension of each node. histWidth and histLength should be divisible by this number
-    HistogramGrid(int histWidth, int histLength, double nodeSideLen):
-            iMax((int)(histWidth/nodeSideLen)), jMax((int)(histLength/nodeSideLen)),
-            nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
-            iSizeActiveRegion(10), jSizeActiveRegion(10)
+    // int nodeSideLen - Side dimension of each node. histWidth and histLength 
+    //  should be a multiple of this number
+    HistogramGrid(int histWidth, int histLength, double nodeSideLen) :
+            iMax(int(histWidth/nodeSideLen) - 1), jMax(int(histLength/nodeSideLen) - 1),
+            nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[iMax]),
+            iSizeActiveRegion(10), jSizeActiveRegion(10) // why are these 10???
     {
-        std::cout<<"grid: iMax = "<<iMax<<". jMax = "<<jMax<<"\n";
+        std::cout << "grid: iMax = " << iMax << ". jMax = " << jMax << "\n";
         //Initializing the histGrid and objectGrid
         for(int i = 0; i < iMax; i++)
         {
@@ -85,7 +86,7 @@ public:
             iMax = (int)(histWidth/nodeSize);
             jMax = (int)(histLength/nodeSize);
             histGrid = new double*[iMax];
-            objectGrid = new int*[jMax];
+            objectGrid = new int*[iMax];
             iSizeActiveRegion = 20;
             jSizeActiveRegion = 20;
 
@@ -120,8 +121,29 @@ public:
             file.close();
         }
 
-        else std::cout << "Unable to open file";
+        else {
+            std::cout << "Unable to open file";
+        }
     }
+
+    HistogramGrid(const HistogramGrid &rhs):iMax(rhs.iMax), jMax(rhs.jMax), nodeSize(rhs.nodeSize),
+                                                           histGrid(new double*[iMax]), objectGrid(new int*[iMax]),
+                                                           iSizeActiveRegion(rhs.iSizeActiveRegion),
+                                                           jSizeActiveRegion(rhs.jSizeActiveRegion)
+    {
+        //Initializing the histGrid and objectGrid
+        for(int i = 0; i < iMax; i++)
+        {
+            histGrid[i] = new double[jMax];
+            objectGrid[i] = new int[jMax];
+            for(int j = 0; j < jMax; j++)
+            {
+                histGrid[i][j] = rhs.histGrid[i][j];
+                objectGrid[i][j] = rhs.objectGrid[i][j];
+            }
+        }
+    }
+
 
     ~HistogramGrid()
     {
@@ -140,7 +162,7 @@ public:
     }
 
 
-    const HistogramGrid& operator= (const HistogramGrid &rhs)
+    const HistogramGrid& operator=(const HistogramGrid &rhs)
     {
         if(this == &rhs)
         {
@@ -163,34 +185,23 @@ public:
         return *this;
     }
 
-    HistogramGrid(const HistogramGrid &rhs):iMax(rhs.iMax), jMax(rhs.jMax), nodeSize(rhs.nodeSize),
-                                                           histGrid(new double*[iMax]), objectGrid(new int*[jMax]),
-                                                           iSizeActiveRegion(rhs.iSizeActiveRegion),
-                                                           jSizeActiveRegion(rhs.jSizeActiveRegion)
-    {
-        //Initializing the histGrid and objectGrid
-        for(int i = 0; i < iMax; i++)
-        {
-            histGrid[i] = new double[jMax];
-            objectGrid[i] = new int[jMax];
-            for(int j = 0; j < jMax; j++)
-            {
-                histGrid[i][j] = rhs.histGrid[i][j];
-                objectGrid[i][j] = rhs.objectGrid[i][j];
-            }
-        }
-    }
 
+    // TODO: Consider making this private.  - Josh
+    // TODO: Also, this assumes that obstacles are going to fall in exactly 
+    //  one grid space. What if the obstacles had a radius and covered multiple
+    //  grid spaces, so you wouldn't even need this method? You would just need
+    //  one method that transforms your collection of obstacles into an occupied
+    //  grid.  - Josh
     //getDiscretePointFromCont
-    //Calculates in which node an object exists based on the continuous (exact) coordinates
+    //Calculates the cell in which an object lies based on its continuous (exact) coordinates
     //Returns a discrete point struct
     discretePoint getDiscretePointFromCont(contPoint pos)
     {
         discretePoint out;
-        out.x = (int)((pos.x)/nodeSize);
-        out.y = (int)((pos.y)/nodeSize);
+        out.x = int(pos.x / nodeSize);
+        out.y = int(pos.y / nodeSize);
         //if(out.x < iMax && out.y < jMax) return out;
-        //TODO ERROR HANDLING
+        //TODO: Handle out-of-bounds arguments
         //throw;
         return out;
     }
@@ -205,20 +216,22 @@ public:
         histGrid[objLoc.x][objLoc.y] = certainty;
     }
 
-    // getProbability
+    // getCertainty
     // Returns the certainty of an object being present at the given node
     double getCertainty(discretePoint pos)
     {
         return histGrid[pos.x][pos.y];
     }
 
+    // Consider making private.  - Josh
     //getDistance
     //Returns scalar distance between two discretePoints (pos1 & pos2) on the histogram grid
     double getDistance(discretePoint pos1, discretePoint pos2)
     {
-        return sqrt(pow((double)pos2.x - pos1.x, 2) + pow((double)pos2.y - pos1.y, 2));
+        return sqrt(pow(double(pos2.x - pos1.x), 2) + pow(double(pos2.y - pos1.y), 2));
     }
 
+    // Private?
     //getAngle
     //Returns the angle between the line between pos2 and posRef and the horizontal along positive i direction.
     double getAngle(discretePoint posRef, discretePoint pos2)
@@ -227,6 +240,7 @@ public:
         if(out < 0) out += 360;
         return out;
     }
+
 
     region getActiveRegion()
     {
@@ -259,6 +273,7 @@ public:
         return activeRegion;
     }
 
+    // TODO: Consider making this return a 'continuous' point.  - Josh
     //getRobotLoc
     //Returns a discretePoint describing the current position of the robot
     discretePoint getRobotLoc()
@@ -266,6 +281,7 @@ public:
         return robotLoc;
     }
 
+    // TODO: See above. 
     //getTargetLoc
     //Returns a discretePoint describing the current position of the target
     discretePoint getTargetLoc()
@@ -273,6 +289,7 @@ public:
         return target;
     }
 
+    // TODO: See above.
     //setTargetLoc
     //Returns a discretePoint describing the current position of the target
     void setTargetLoc(discretePoint targetLoc)
@@ -280,6 +297,7 @@ public:
         target = targetLoc;
     }
 
+    // TODO: See above.
     void setRobotLoc(discretePoint robotLocIn)
     {
         robotLoc = robotLocIn;

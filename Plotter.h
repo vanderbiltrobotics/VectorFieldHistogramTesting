@@ -12,6 +12,9 @@
 #ifndef VECTORFIELDHISTOGRAMTESTING_PLOTTER_H
 #define VECTORFIELDHISTOGRAMTESTING_PLOTTER_H
 
+// TODO: Draw a thick line out of the center of the robot to indicate which 
+//  direction it's traveling.  - Josh
+
 class Plotter {
 private:
     std::ofstream f;

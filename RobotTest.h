@@ -13,6 +13,8 @@
 
 
 
+// TODO: I don't quite understand why you needed an entire new class for the 
+//  execution of the program. You have something against the main method?  - Josh
 class RobotTest{
 private:
     HistogramGrid grid;
