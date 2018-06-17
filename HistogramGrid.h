@@ -17,7 +17,7 @@ private:
     int iMax; //Size in the i direction of the histogram grid
     int jMax; //Size in the j direction of the histogram grid
 
-    double nodeSize; //Side dimension of each node. Assumes that each node is square
+    double nodeSize; //Side dimension of each node. Each node is a square
 
     double** histGrid; //Histogram grid object. Stores the certainty values for all nodes in grid
     int** objectGrid; //Stores the type of object that exists at each node
@@ -29,18 +29,22 @@ private:
     discretePoint target;
 
 public:
-    //HistogramGrid
-    //Creates a new histogram grid object with no objects present in the grid
+    // HistogramGrid
+    // Creates a new histogram grid object with no objects present in the grid
     // int histWidth - Width of the entire histogram in meters
     // int histLength - Length of the entire histogram in meters
     // int nodeSideLen - Side dimension of each node. histWidth and histLength 
     //  should be a multiple of this number
     HistogramGrid(int histWidth, int histLength, double nodeSideLen) :
-            iMax(int(histWidth/nodeSideLen) - 1), jMax(int(histLength/nodeSideLen) - 1),
-            nodeSize(nodeSideLen), histGrid(new double*[iMax]), objectGrid(new int*[iMax]),
-            iSizeActiveRegion(10), jSizeActiveRegion(10) // why are these 10???
+            iMax(int(double(histWidth)/nodeSideLen) - 1), 
+            jMax(int(double(histLength)/nodeSideLen) - 1),
+            nodeSize(nodeSideLen),
+            histGrid(new double*[iMax]),
+            objectGrid(new int*[iMax]),
+            iSizeActiveRegion(10),
+            jSizeActiveRegion(10) // why are these 10???
     {
-        std::cout << "grid: iMax = " << iMax << ". jMax = " << jMax << "\n";
+        std::cout << "Initializing grid: iMax = " << iMax << ". jMax = " << jMax << "\n";
         //Initializing the histGrid and objectGrid
         for(int i = 0; i < iMax; i++)
         {
@@ -53,18 +57,23 @@ public:
             }
         }
 
-        // FIXME: manually add obstacles
+        // DEBUG!!!!
+        // manually add obstacles
         objectGrid[iMax/2][jMax/2] = 1;
         objectGrid[iMax/2-1][jMax/2-1] = 1;
         objectGrid[iMax/2][jMax/2-1] = 1;
         objectGrid[iMax/2-1][jMax/2] = 1;
     }
 
-    //HistogramGrid
-    //Alternate constructor used for ingesting grid from file. Used only for testing
+    // DEBUG!!!
+    // HistogramGrid
+    // Alternate constructor used for reading grid from file. Used only for testing
     HistogramGrid(std::string fName, discretePoint robotLocIn)
     {
-        //std::cout << "\n\ntesting histogram grid initialization: "<< std::endl;
+        std::cout << std::endl 
+                  << std::endl
+                  << "testing histogram grid initialization: "
+                  << std::endl;
 
         robotLoc = robotLocIn;
         std::string data; //Temporary string to store ingested data
@@ -126,10 +135,14 @@ public:
         }
     }
 
-    HistogramGrid(const HistogramGrid &rhs):iMax(rhs.iMax), jMax(rhs.jMax), nodeSize(rhs.nodeSize),
-                                                           histGrid(new double*[iMax]), objectGrid(new int*[iMax]),
-                                                           iSizeActiveRegion(rhs.iSizeActiveRegion),
-                                                           jSizeActiveRegion(rhs.jSizeActiveRegion)
+    HistogramGrid(const HistogramGrid &rhs) : 
+            iMax(rhs.iMax), 
+            jMax(rhs.jMax), 
+            nodeSize(rhs.nodeSize),
+            histGrid(new double*[iMax]), 
+            objectGrid(new int*[iMax]),
+            iSizeActiveRegion(rhs.iSizeActiveRegion),
+            jSizeActiveRegion(rhs.jSizeActiveRegion)
     {
         //Initializing the histGrid and objectGrid
         for(int i = 0; i < iMax; i++)
@@ -195,7 +208,7 @@ public:
     //getDiscretePointFromCont
     //Calculates the cell in which an object lies based on its continuous (exact) coordinates
     //Returns a discrete point struct
-    discretePoint getDiscretePointFromCont(contPoint pos)
+    discretePoint getDiscretePointFromCont(const contPoint& pos) const
     {
         discretePoint out;
         out.x = int(pos.x / nodeSize);
@@ -218,7 +231,7 @@ public:
 
     // getCertainty
     // Returns the certainty of an object being present at the given node
-    double getCertainty(discretePoint pos)
+    double getCertainty(discretePoint pos) const
     {
         return histGrid[pos.x][pos.y];
     }
@@ -226,33 +239,34 @@ public:
     // Consider making private.  - Josh
     //getDistance
     //Returns scalar distance between two discretePoints (pos1 & pos2) on the histogram grid
-    double getDistance(discretePoint pos1, discretePoint pos2)
+    double getDistance(discretePoint pos1, discretePoint pos2) const
     {
         return sqrt(pow(double(pos2.x - pos1.x), 2) + pow(double(pos2.y - pos1.y), 2));
     }
 
     // Private?
-    //getAngle
-    //Returns the angle between the line between pos2 and posRef and the horizontal along positive i direction.
-    double getAngle(discretePoint posRef, discretePoint pos2)
+    // getAngle
+    // Returns the angle between the line between pos2 and posRef and the horizontal along
+    //  positive i direction.
+    double getAngle(discretePoint posRef, discretePoint pos2) const
     {
-        double out = atan2((double)pos2.y - posRef.y, (double)pos2.x - posRef.x)*180/M_PI;
+        double out = atan2(double(pos2.y) - posRef.y, double(pos2.x) - posRef.x)*180/M_PI;
         if(out < 0) out += 360;
         return out;
     }
 
 
-    region getActiveRegion()
+    region getActiveRegion() const
     {
         region activeRegion;
 
-        activeRegion.min.x = (robotLoc.x - iSizeActiveRegion/2);
+        activeRegion.min.x = (robotLoc.x - iSizeActiveRegion / 2);
         if(activeRegion.min.x < 0)
         {
             activeRegion.min.x = 0;
         }
 
-        activeRegion.min.y = (robotLoc.y - jSizeActiveRegion/2);
+        activeRegion.min.y = (robotLoc.y - jSizeActiveRegion / 2);
         if(activeRegion.min.y < 0)
         {
             activeRegion.min.y = 0;
@@ -276,15 +290,15 @@ public:
     // TODO: Consider making this return a 'continuous' point.  - Josh
     //getRobotLoc
     //Returns a discretePoint describing the current position of the robot
-    discretePoint getRobotLoc()
+    discretePoint getRobotLoc() const
     {
         return robotLoc;
     }
 
     // TODO: See above. 
-    //getTargetLoc
-    //Returns a discretePoint describing the current position of the target
-    discretePoint getTargetLoc()
+    // getTargetLoc
+    // Returns a discretePoint describing the current position of the target
+    discretePoint getTargetLoc() const
     {
         return target;
     }
@@ -303,22 +317,22 @@ public:
         robotLoc = robotLocIn;
     }
 
-    int** getObjectGrid()
+    int** getObjectGrid() const
     {
         return objectGrid;
     }
 
-    int getCellValue(int i, int j)
+    int getCellValue(int i, int j) const
     {
         return objectGrid[i][j];
     }
 
-    int getIMax()
+    int getIMax() const
     {
       return iMax;
     }
 
-    int getJMax()
+    int getJMax() const
     {
       return jMax;
     }

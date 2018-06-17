@@ -15,11 +15,11 @@
 
 // TODO: I don't quite understand why you needed an entire new class for the 
 //  execution of the program. You have something against the main method?  - Josh
-class RobotTest{
+class RobotTest {
 private:
     HistogramGrid grid;
     PolarHistogram hist;
-    VFHPather pather; //Object used to store the grid/map of obstacles
+    VFHPather pather; // Object used to store the grid/map of obstacles
     discretePoint currentPosition; //Stores the location of the robot
     double currentSpeed; // linear distance per timestep
     double maxTurnSpeed; // angle per timestep

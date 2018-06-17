@@ -59,8 +59,6 @@ public:
     //Builds the vector field histogram based on current position of robot and surrounding obstacles
     void generateHistogram()
     {
-
-
         hist.reset(); //Resetting the histogram
 
         region activeRegion =  (*grid).getActiveRegion();
@@ -84,9 +82,7 @@ public:
             }
         }
         //std::cout << "End Histogram Generation\n";
-
         std::cout << "\n";
-
     }
 
     //getIndex
@@ -115,14 +111,14 @@ public:
         int nearIndex = -1; //Index of the edge of valley closest to the target
         int farIndex = -1; //Index of the edge of the valley furthest from target
         //Determining if the target direction falls within a bin
-        if(hist.getValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
+        if(hist.getBinValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
         {
             std::cout << "TEST 1 --------------\n";
             //Find upper boundary of valley
             for(int i = startBin + 1; getIndex(i, hist.getNumBins()) != startBin; i++)
             {
                 //std::cout << getIndex(i, hist.getNumBins()) << " ";
-                if(hist.getValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
+                if(hist.getBinValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
                 {
                     farIndex = i; //Found the further edge of the valley
                     break;
@@ -143,8 +139,8 @@ public:
             //Find lower boundary of valley
             for(int i = startBin - 1; getIndex(i, hist.getNumBins()) != startBin; i--)
             {
-                //std::cout << hist.getValue(hist.getValue(getIndex(i, hist.getNumBins()))) << "\n\n\n";
-                if(hist.getValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
+                //std::cout << hist.getBinValue(hist.getBinValue(getIndex(i, hist.getNumBins()))) << "\n\n\n";
+                if(hist.getBinValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
                 {
                     nearIndex = i + 1; //Found the nearer edge of the valley
                     break;
@@ -163,12 +159,12 @@ public:
             //Loop begins iterating at the startBin, and alternates back and forth to find nearest valley
             for (int count = 1; count <= hist.getNumBins(); count = count + 1) {
                 int i = getIndex(startBin + negative * count / 2, hist.getNumBins()); //Index of bin to check next
-                if (hist.getValue(i) < valleyThreshold) //Found valley
+                if (hist.getBinValue(i) < valleyThreshold) //Found valley
                 {
                     nearIndex = i;
                     count++;
                     i = getIndex(i + negative, hist.getNumBins()); //Adds or subtracts index based on direction of array traversal.
-                    while (count <= hist.getNumBins() && hist.getValue(i) < valleyThreshold) {
+                    while (count <= hist.getNumBins() && hist.getBinValue(i) < valleyThreshold) {
                         i = getIndex(i + negative, hist.getNumBins());
                     }
                     farIndex = i;

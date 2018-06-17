@@ -14,7 +14,7 @@ private:
 
 public:
     GNUPlot();
-    virtual ~GNUPlot();
+    ~GNUPlot();
 
     bool isOpened() const;
 

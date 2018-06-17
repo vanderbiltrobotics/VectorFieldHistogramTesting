@@ -1,8 +1,7 @@
 #include "GNUPlot.h"
 
-GNUPlot::GNUPlot()
+GNUPlot::GNUPlot() : _pipe(nullptr)
 {
-    _pipe = nullptr;
 }
 
 GNUPlot::~GNUPlot()
@@ -58,7 +57,7 @@ void GNUPlot::execute(const std::vector<std::string> &script)
 {
     if (isOpened())
     {
-        for (size_t i = 0; i < script.size(); i++)
+        for (size_t i = 0; i < script.size(); ++i)
         {
             write(script[i]);
             flush();
