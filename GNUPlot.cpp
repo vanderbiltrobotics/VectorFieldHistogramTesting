@@ -1,3 +1,10 @@
+/**
+ * GNUPlot.h
+ */
+
+#ifndef GNUPLOT_CPP
+#define GNUPLOT_CPP
+
 #include "GNUPlot.h"
 
 GNUPlot::GNUPlot() : _pipe(nullptr)
@@ -65,3 +72,5 @@ void GNUPlot::execute(const std::vector<std::string> &script)
     }
 }
 
+
+#endif
