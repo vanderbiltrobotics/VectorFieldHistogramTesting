@@ -1,6 +1,9 @@
-//
-// Created by Swapnil on 2/3/2018.
-//
+/**
+ * VFHPather.h
+ * 
+ * \author Swapnil Pande
+ * \author Joshua Petrin
+ */
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
 #define VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
@@ -14,26 +17,35 @@
 #include "HistogramGrid.h"
 
 
-class VFHPather{
+class VFHPather {
 private:
 
-    PolarHistogram hist; //Object used to store the polar histogram
-    HistogramGrid* grid; //Object used to store the grid/map of obstacles
+    PolarHistogram polarHist;  ///< The polar histogram
+    HistogramGrid* grid;  ///< The grid of obstacle likelihood
 
 
-    double a; //Constants for the weighting function for histogram generation
-    double b;
+    double a;  ///< Constant for histogram generating function
+    double b;  ///< Constant for histogram generating function
 
-    int l; //Smoothing constant for polar histogram
+    int l;  ///< Smoothing constant for polar histogram
 
-    int smax; //Maximum number of nodes that define a wide valley
+    int smax;  ///< Maximum number of nodes that define a wide valley
 
-    double valleyThreshold;
+    double valleyThreshold;  ///< 
 
 public:
-    //Default Constructor, implements testing mode of Pather with hard-coded default values
-    VFHPather(): hist(true), grid(new HistogramGrid(10, 10, 0.1)), a(50), b(100), l(5), valleyThreshold(15)
-    {}
+    /// Default constructor. Initializes a DEBUG polar histogram, a 10x10
+    /// 
+    VFHPather() :
+            polarHist(true)
+            grid(&HistogramGrid(10, 10, 0.1)),
+            a(50),
+            b(100),
+            l(5),
+            valleyThreshold(15)
+    {
+
+    }
 
     //Alternate constructor takes all parameters
     //histIn - PolarHistogram object to store the histogram
@@ -44,8 +56,11 @@ public:
     //valleyThreshold - Threshold for determining whether bin should be included in valley
     //                  If polar object density falls below valley threshold, bin is considered to be part of valley
     VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn, double aIn, double bIn,
-              double lIn, double valleyThresholdIn): hist(histIn), grid(gridIn), a(aIn), b(bIn), l(lIn),
-                                                     smax(5), valleyThreshold(valleyThresholdIn) {}
+              double lIn, double valleyThresholdIn): polarHist(histIn), grid(gridIn), a(aIn), b(bIn), l(lIn),
+                                                     smax(5), valleyThreshold(valleyThresholdIn) 
+    {
+
+    }
     //TODO: Add ability to dynamically set certainty value
     //TODO This function may be deprecated as we restructure the robot code for ROSMOD
     //updateRobotPosition

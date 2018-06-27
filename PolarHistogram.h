@@ -1,6 +1,7 @@
-//PolarHistogram class creates an object to represent the Polar Histogram
-//
-//
+// 
+// PolarHistogram class creates an object to represent 
+// the Polar Histogram
+// 
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_POLARHISTOGRAM_H
 #define VECTORFIELDHISTOGRAMTESTING_POLARHISTOGRAM_H

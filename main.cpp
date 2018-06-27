@@ -16,48 +16,35 @@ int getIndex(int a, int n) {
 
 int main()
 {
-//    Plotter plotter;
-//    std::vector<std::vector<int>> data(2, std::vector<int>(0, 0));
-//    data[0].push_back(0);
-//    data[1].push_back(0);
-//    for(int i = 0; i < 500; i++)
-//    {
-//        data[0][0] = i;
-//        data[1][0] = i;
-//
-//        std::cout << i << std::endl;
-//        plotter.plot(data);
-//    }
+  // Start the robot at (30,30)
+  discretePoint init;
+  init.x = 30;
+  init.y = 30;
 
-	// Start the robot at (30,30)
-    discretePoint init;
-    init.x = 30;
-    init.y = 30;
+  // TODO: Draw a thick line out of the center of the robot to indicate which 
+  //  direction it's traveling.  - Josh
+  // double angle_init = 0.78; // pi/4
+  double angle_init = 90; // != pi/4
+  double speed_init = 0.5;
 
-    // TODO: Draw a thick line out of the center of the robot to indicate which 
-    //  direction it's traveling.  - Josh
-    // double angle_init = 0.78; // pi/4
-    double angle_init = 90; // != pi/4
-    double speed_init = 0.5;
+  // TODO: I don't quite understand why you needed an entire new class for the 
+  //  execution of the program. You have something against the main method?  - Josh
+  RobotTest bot(init, angle_init, speed_init);
 
-    // TODO: I don't quite understand why you needed an entire new class for the 
-    //  execution of the program. You have something against the main method?  - Josh
-    RobotTest bot(init, angle_init, speed_init);
-
-    int timestep = 100;
+  int timestep = 100;
 
 
-    for(int i = 0; i < timestep; ++i)
-    {
-      std::cout<<i<<"th timestep: ";
-      bot.move();
-      bot.talk();
-      // bot.draw(gnuplot);
-      bot.draw();
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  for(int i = 0; i < timestep; ++i)
+  {
+    std::cout<<i<<"th timestep: ";
+    bot.move();
+    bot.talk();
+    // bot.draw(gnuplot);
+    bot.draw();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        std::cout << "\n\n\n\n\n\n";
-    }
+    std::cout << "\n\n\n\n\n\n";
+  }
 //    // VFHPather pather;
 //    // discretePoint robotLoc;
 //    // robotLoc.x = 25;

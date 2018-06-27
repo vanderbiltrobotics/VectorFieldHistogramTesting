@@ -1,6 +1,7 @@
-//
-// Created by Swapnil on 1/25/2018.
-//
+/**
+ * HistogramGrid.h
+ * \author Swapnil Pande
+ */
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
 #define VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
@@ -12,31 +13,44 @@
 
 #include "Utils.h"
 
+
+/**
+ * \brief Represents the Histrogram Grid, which is a collection of obstacle likelihood
+ *        scores. 
+ *
+ * When a sensor detects an obstacle that lies inside a square in the Histogram grid,
+ * that square's "obstacle likelihood" value is incremented by 1. This likelihood value
+ * affects the robot's willingness to traverse over it. 
+ * 
+ * \author Swapnil Pande
+ */
 class HistogramGrid {
 private:
-    int iMax; //Size in the i direction of the histogram grid
-    int jMax; //Size in the j direction of the histogram grid
+    int iMax;               ///< Size in the i direction of the histogram grid
+    int jMax;               ///< Size in the j direction of the histogram grid
 
-    double nodeSize; //Side dimension of each node. Each node is a square
+    double nodeSize;        ///< Side dimension of each node. Each node is a square
 
-    double** histGrid; //Histogram grid object. Stores the certainty values for all nodes in grid
-    int** objectGrid; //Stores the type of object that exists at each node
+    double** histGrid;      ///< Histogram grid object. Stores the certainty values for all nodes in grid
+    int** objectGrid;       ///< Stores the type of object that exists at each node
 
-    int iSizeActiveRegion; //i-dimension size of the active region measured in number of nodes
-    int jSizeActiveRegion; //j-dimension size of the active region
+    int iSizeActiveRegion;  ///< i-dimension size of the active region measured in number of nodes
+    int jSizeActiveRegion;  ///< j-dimension size of the active region
 
-    discretePoint robotLoc; //Stores the location of the robot
-    discretePoint target;
+    discretePoint robotLoc; ///< The coordinates of the robot
+    discretePoint target;   ///< The coordinates of the robot's destination
 
 public:
-    // HistogramGrid
-    // Creates a new histogram grid object with no objects present in the grid
-    // int histWidth - Width of the entire histogram in meters
-    // int histLength - Length of the entire histogram in meters
-    // int nodeSideLen - Side dimension of each node. histWidth and histLength 
-    //  should be a multiple of this number
+    /**
+     * Creates a new histogram grid object with no objects present in the grid
+     * 
+     * \param histWidth Width of the entire histogram in meters
+     * \param histLength Length of the entire histogram in meters
+     * \param nodeSideLen Side dimension of each node. histWidth and histLength 
+     * should be a multiple of this number
+     */
     HistogramGrid(int histWidth, int histLength, double nodeSideLen) :
-            iMax(int(double(histWidth)/nodeSideLen) - 1), 
+            iMax(int(double(histWidth)/nodeSideLen) - 1),
             jMax(int(double(histLength)/nodeSideLen) - 1),
             nodeSize(nodeSideLen),
             histGrid(new double*[iMax]),

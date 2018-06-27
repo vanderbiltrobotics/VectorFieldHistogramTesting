@@ -15,25 +15,31 @@
 
 /**
  * \brief A class for sending plot commands to GNU-Plot.
+ * 
  * Pulled from the following GitHub repo: 
  * https://github.com/ccerhan/gnuplot-cpp-interface
+ * 
  * \author ccerhan on GitHub. 
  */
 class GNUPlot
 {
 private:
-  FILE* _pipe;
+  FILE* _pipe;  ///< The write pipe to GNU-Plot. 
 
 public:
-  /// Initialize this class. 
-  /// This does NOT begin gnuplot; open() must be called afterward to send 
-  /// plot commands. All commands before then will be ignored.
+  /**
+   * \brief Constructor.
+   * 
+   * This constructor does NOT begin GNU-Plot; open() must be called afterward to send 
+   * plot commands. All commands before then will be ignored.
+   */
   GNUPlot();
+
   ~GNUPlot();
 
   bool isOpened() const;
 
-  /// Open the GNUPlot application.
+  /// Open the GNU-Plot application.
   void open();
   /// Sends all data in the output file's buffer to the file. 
   void flush();

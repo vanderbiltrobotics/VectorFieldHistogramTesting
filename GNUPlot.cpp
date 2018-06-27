@@ -1,5 +1,5 @@
 /**
- * GNUPlot.h
+ * GNUPlot.cpp
  */
 
 #ifndef GNUPLOT_CPP
