@@ -37,8 +37,8 @@ public:
     /// Default constructor. Initializes a DEBUG polar histogram, a 10x10
     /// 
     VFHPather() :
-            polarHist(true)
-            grid(&HistogramGrid(10, 10, 0.1)),
+            polarHist(true),
+            grid(new HistogramGrid(10, 10, 0.1)),
             a(50),
             b(100),
             l(5),
@@ -74,7 +74,7 @@ public:
     //Builds the vector field histogram based on current position of robot and surrounding obstacles
     void generateHistogram()
     {
-        hist.reset(); //Resetting the histogram
+        polarHist.reset(); //Resetting the histogram
 
         region activeRegion =  (*grid).getActiveRegion();
 
@@ -89,7 +89,7 @@ public:
             for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
             {
                 double val = pow( (*grid).getCertainty(curNode),2)*(a-b* (*grid).getDistance(curNode,  (*grid).getRobotLoc()));
-                hist.addValue( (*grid).getAngle( (*grid).getRobotLoc(), curNode), val);
+                polarHist.addValue( (*grid).getAngle( (*grid).getRobotLoc(), curNode), val);
                 //std::cout << curNode.x << " " << curNode.y << " " << val << "\n";
 
                 (*grid).getCertainty(curNode);
@@ -120,20 +120,20 @@ public:
 
 
         //startBin represent bin at which valley finding starts
-        int startBin = hist.getBinFromAngle((*grid).getAngle((*grid).getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
+        int startBin = polarHist.getBinFromAngle((*grid).getAngle((*grid).getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
 
         int negative = 1; //Used to alternate the direction of the array iteration
         int nearIndex = -1; //Index of the edge of valley closest to the target
         int farIndex = -1; //Index of the edge of the valley furthest from target
         //Determining if the target direction falls within a bin
-        if(hist.getBinValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
+        if(polarHist.getBinValue(startBin) < valleyThreshold) //Desired travel direction falls within a valley
         {
             std::cout << "TEST 1 --------------\n";
             //Find upper boundary of valley
-            for(int i = startBin + 1; getIndex(i, hist.getNumBins()) != startBin; i++)
+            for(int i = startBin + 1; getIndex(i, polarHist.getNumBins()) != startBin; i++)
             {
                 //std::cout << getIndex(i, hist.getNumBins()) << " ";
-                if(hist.getBinValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
+                if(polarHist.getBinValue(getIndex(i, polarHist.getNumBins())) > valleyThreshold)
                 {
                     farIndex = i; //Found the further edge of the valley
                     break;
@@ -146,16 +146,16 @@ public:
             //Robot should travel straight to target.
             if(farIndex == -1)
             {
-                return hist.getAngleFromBin(startBin);
+                return polarHist.getAngleFromBin(startBin);
             }
             std::cout << "TEST 7 --------------\n";
 
 
             //Find lower boundary of valley
-            for(int i = startBin - 1; getIndex(i, hist.getNumBins()) != startBin; i--)
+            for(int i = startBin - 1; getIndex(i, polarHist.getNumBins()) != startBin; i--)
             {
                 //std::cout << hist.getBinValue(hist.getBinValue(getIndex(i, hist.getNumBins()))) << "\n\n\n";
-                if(hist.getBinValue(getIndex(i, hist.getNumBins())) > valleyThreshold)
+                if(polarHist.getBinValue(getIndex(i, polarHist.getNumBins())) > valleyThreshold)
                 {
                     nearIndex = i + 1; //Found the nearer edge of the valley
                     break;
@@ -164,7 +164,7 @@ public:
             std::cout << "TEST 3 --------------\n";
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-            return hist.getAngleFromBin(getIndex((farIndex+nearIndex)/2, hist.getNumBins()));
+            return polarHist.getAngleFromBin(getIndex((farIndex+nearIndex)/2, polarHist.getNumBins()));
         }
         else
         {
@@ -172,15 +172,15 @@ public:
             //Looping over the entire polar histogram
             //Count stores the number of bins that have been checked
             //Loop begins iterating at the startBin, and alternates back and forth to find nearest valley
-            for (int count = 1; count <= hist.getNumBins(); count = count + 1) {
-                int i = getIndex(startBin + negative * count / 2, hist.getNumBins()); //Index of bin to check next
-                if (hist.getBinValue(i) < valleyThreshold) //Found valley
+            for (int count = 1; count <= polarHist.getNumBins(); count = count + 1) {
+                int i = getIndex(startBin + negative * count / 2, polarHist.getNumBins()); //Index of bin to check next
+                if (polarHist.getBinValue(i) < valleyThreshold) //Found valley
                 {
                     nearIndex = i;
                     count++;
-                    i = getIndex(i + negative, hist.getNumBins()); //Adds or subtracts index based on direction of array traversal.
-                    while (count <= hist.getNumBins() && hist.getBinValue(i) < valleyThreshold) {
-                        i = getIndex(i + negative, hist.getNumBins());
+                    i = getIndex(i + negative, polarHist.getNumBins()); //Adds or subtracts index based on direction of array traversal.
+                    while (count <= polarHist.getNumBins() && polarHist.getBinValue(i) < valleyThreshold) {
+                        i = getIndex(i + negative, polarHist.getNumBins());
                     }
                     farIndex = i;
                     break; //Since loop begins iterating from the target direction, the valley must be the closest valley
@@ -193,22 +193,22 @@ public:
         int travelDirectionIndex;
         if(startBin > nearIndex && farIndex > nearIndex)
         {
-            travelDirectionIndex = getIndex((nearIndex + farIndex + hist.getNumBins())/2, hist.getNumBins());
+            travelDirectionIndex = getIndex((nearIndex + farIndex + polarHist.getNumBins())/2, polarHist.getNumBins());
         }
         else if(startBin < nearIndex && farIndex < nearIndex)
         {
-            travelDirectionIndex = getIndex((nearIndex - hist.getNumBins() + farIndex )/2, hist.getNumBins());
+            travelDirectionIndex = getIndex((nearIndex - polarHist.getNumBins() + farIndex )/2, polarHist.getNumBins());
         }
         else
         {
             travelDirectionIndex = (nearIndex + farIndex)/2;
         }
-        return hist.getAngleFromBin(travelDirectionIndex);
+        return polarHist.getAngleFromBin(travelDirectionIndex);
     }
 
     void printHistogram()
     {
-        hist.printHistogram();
+        polarHist.printHistogram();
     }
 
     int** getObjectGrid()
