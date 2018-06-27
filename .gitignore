@@ -2,3 +2,8 @@
 build/
 .DS_Store
 cmake-build-debug
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+docs
