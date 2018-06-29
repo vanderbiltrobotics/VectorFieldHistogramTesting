@@ -25,24 +25,6 @@ public:
         }
     }
 
-    // Constructor for DEBUGGING.
-    // Testing constructor with hardcoded values.
-    PolarHistogram(bool test) : nBins(10), binWidth(36.0), histogram(new double[10])
-    {
-        for(int i = 0; i <= 2; ++i)
-        {
-            histogram[i] = 0;
-        }
-
-        histogram[3] = 7.0;
-        histogram[4] = 7.0;
-        histogram[5] = 3.0;
-        histogram[6] = 3.0;
-        histogram[7] = 10.0;
-        histogram[8] = 2.0;
-        histogram[9] = 3.0;
-    }
-
     // getBinFromAngle
     // Returns the index of the bin based on the angle relative to the absolute coordinate
     // system with which the histogram is represented

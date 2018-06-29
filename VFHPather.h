@@ -1,8 +1,12 @@
 /**
  * VFHPather.h
+ *
+ * Implements the PolarHistogram and the HistogramGrid in the way that the paper by 
+ * J. Borenstein and Y. Koren discuss in the paper "The Vector Field Histogram, et al."
+ * See <URL> for more information.
  * 
- * \author Swapnil Pande
- * \author Joshua Petrin
+ * @author Swapnil Pande
+ * @author Joshua Petrin
  */
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
@@ -31,20 +35,21 @@ private:
 
     int smax;  ///< Maximum number of nodes that define a wide valley
 
-    double valleyThreshold;  ///< 
+    int valleyThreshold;  ///< Threshold for deciding if bin is a 'valley' (see paper)
 
 public:
-    /// Default constructor. Initializes a DEBUG polar histogram, a 10x10
-    /// 
+    /// Default constructor. Initializes a 10x10 (0.1) HistogramGrid, a PolarHistogram
+    /// with 10-degree resolution, a = 50, b = 100, smoothing constant = 5, 
+    /// consec. threshold for wide valleys = 5, and valley score threshold = 15.
     VFHPather() :
-            polarHist(true),
+            polarHist(36),
             grid(new HistogramGrid(10, 10, 0.1)),
-            a(50),
-            b(100),
+            a(50.0),
+            b(100.0),
             l(5),
+            smax(5),
             valleyThreshold(15)
     {
-
     }
 
     //Alternate constructor takes all parameters
@@ -55,18 +60,30 @@ public:
     //lIn - Smoothing algorithm constant - determines the number of bins included in smoothing
     //valleyThreshold - Threshold for determining whether bin should be included in valley
     //                  If polar object density falls below valley threshold, bin is considered to be part of valley
-    VFHPather(PolarHistogram &histIn, HistogramGrid *gridIn, double aIn, double bIn,
-              double lIn, double valleyThresholdIn): polarHist(histIn), grid(gridIn), a(aIn), b(bIn), l(lIn),
-                                                     smax(5), valleyThreshold(valleyThresholdIn) 
+    VFHPather(
+        PolarHistogram &histIn, 
+        HistogramGrid *gridIn, 
+        double aIn, 
+        double bIn,
+        int lIn, 
+        int valleyThresholdIn) : 
+            polarHist(histIn), 
+            grid(gridIn), 
+            a(aIn), 
+            b(bIn), 
+            l(lIn),
+            smax(5),  // should probably be a function of bin width
+            valleyThreshold(valleyThresholdIn) 
     {
-
     }
+
+
     //TODO: Add ability to dynamically set certainty value
-    //TODO This function may be deprecated as we restructure the robot code for ROSMOD
+    //TODO: This function may be deprecated as we restructure the robot code for ROSMOD
     //updateRobotPosition
     void updateRobotPosition(discretePoint pos)
     {
-        (*grid).setRobotLoc(pos);
+        grid->setRobotLoc(pos);
     }
 
 
@@ -76,7 +93,7 @@ public:
     {
         polarHist.reset(); //Resetting the histogram
 
-        region activeRegion =  (*grid).getActiveRegion();
+        region activeRegion =  grid->getActiveRegion();
 
         discretePoint curNode; //Node currently being iterated over
 
@@ -88,12 +105,12 @@ public:
         {
             for(curNode.y = activeRegion.min.y; curNode.y < activeRegion.max.y; curNode.y++)
             {
-                double val = pow( (*grid).getCertainty(curNode),2)*(a-b* (*grid).getDistance(curNode,  (*grid).getRobotLoc()));
-                polarHist.addValue( (*grid).getAngle( (*grid).getRobotLoc(), curNode), val);
+                double val = pow( grid->getCertainty(curNode), 2) * (a - b*grid->getDistance(curNode, grid->getRobotLoc()));
+                polarHist.addValue( grid->getAngle( grid->getRobotLoc(), curNode), val);
                 //std::cout << curNode.x << " " << curNode.y << " " << val << "\n";
 
-                (*grid).getCertainty(curNode);
-                    //std::cout << curNode.x << " " << curNode.y << " " << pow( (*grid).getCertainty(curNode),2)*(a-b* (*grid).getDistance(curNode,  (*grid).getRobotLoc())) << "\n";
+                grid->getCertainty(curNode);
+                    //std::cout << curNode.x << " " << curNode.y << " " << pow( grid->getCertainty(curNode),2)*(a-b* grid->getDistance(curNode,  grid->getRobotLoc())) << "\n";
             }
         }
         //std::cout << "End Histogram Generation\n";
@@ -120,7 +137,7 @@ public:
 
 
         //startBin represent bin at which valley finding starts
-        int startBin = polarHist.getBinFromAngle((*grid).getAngle((*grid).getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
+        int startBin = polarHist.getBinFromAngle(grid->getAngle(grid->getRobotLoc(), grid->getTargetLoc())); //Determine the bin in which the target falls
 
         int negative = 1; //Used to alternate the direction of the array iteration
         int nearIndex = -1; //Index of the edge of valley closest to the target
@@ -213,22 +230,22 @@ public:
 
     int** getObjectGrid()
     {
-      return (*grid).getObjectGrid();
+      return grid->getObjectGrid();
     }
 
     int getCellValue(int i, int j)
     {
-        return (*grid).getCellValue(i, j);
+        return grid->getCellValue(i, j);
     }
 
     int getIMax()
     {
-        return (*grid).getIMax();
+        return grid->getIMax();
     }
 
     int getJMax()
     {
-        return (*grid).getJMax();
+        return grid->getJMax();
     }
 };
 #endif //VECTORFIELDHISTOGRAMTESTING_VFHPATHER_H
