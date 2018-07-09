@@ -14,12 +14,12 @@
 
 
 /**
- * \brief A class for sending plot commands to GNU-Plot.
+ * @brief A class for sending plot commands to GNU-Plot.
  * 
  * Pulled from the following GitHub repo: 
  * https://github.com/ccerhan/gnuplot-cpp-interface
  * 
- * \author ccerhan on GitHub. 
+ * @author ccerhan on GitHub. 
  */
 class GNUPlot
 {
@@ -28,7 +28,7 @@ private:
 
 public:
   /**
-   * \brief Constructor.
+   * @brief Constructor.
    * 
    * This constructor does NOT begin GNU-Plot; open() must be called afterward to send 
    * plot commands. All commands before then will be ignored.

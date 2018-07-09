@@ -1,6 +1,7 @@
 /**
  * HistogramGrid.h
- * \author Swapnil Pande
+ * @author Swapnil Pande
+ * @author Joshua Petrin
  */
 
 #ifndef VECTORFIELDHISTOGRAMTESTING_HISTOGRAMGRID_H
@@ -15,16 +16,16 @@
 
 
 /**
- * \brief Represents the Histrogram Grid, which is a collection of obstacle likelihood
+ * @brief Represents the Histrogram Grid, which is a collection of obstacle likelihood
  *        scores. 
  *
  * When a sensor detects an obstacle that lies inside a square in the Histogram grid,
  * that square's "obstacle likelihood" value is incremented by 1. This likelihood value
  * affects the robot's willingness to traverse over it. 
  * 
- * \author Swapnil Pande
+ * @author Swapnil Pande
  */
-class HistogramGrid {
+class Grid {
 private:
     int iMax;               ///< Size in the i direction of the histogram grid
     int jMax;               ///< Size in the j direction of the histogram grid
@@ -37,17 +38,16 @@ private:
     int iSizeActiveRegion;  ///< i-dimension size of the active region measured in number of nodes
     int jSizeActiveRegion;  ///< j-dimension size of the active region
 
-    discretePoint robotLoc; ///< The coordinates of the robot
-    discretePoint target;   ///< The coordinates of the robot's destination
+    Point<int> robotLoc;    ///< The coordinates of the robot
+    Point<int> target;      ///< The coordinates of the robot's destination
 
 public:
     /**
-     * Creates a new histogram grid object with no objects present in the grid
+     * @brief Creates a new histogram grid object with no objects present in the grid
      * 
-     * \param histWidth Width of the entire histogram in meters
-     * \param histLength Length of the entire histogram in meters
-     * \param nodeSideLen Side dimension of each node. histWidth and histLength 
-     * should be a multiple of this number
+     * @param histWidth   Width of the entire histogram in meters
+     * @param histLength  Length of the entire histogram in meters
+     * @param nodeSideLen Side dimension of each square in the graph. 
      */
     HistogramGrid(int histWidth, int histLength, double nodeSideLen) :
             iMax(int(double(histWidth)/nodeSideLen) - 1),
